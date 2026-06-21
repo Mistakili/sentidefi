@@ -224,7 +224,7 @@ function MessageBubble({ message }: { message: Message }) {
   }
 
   const isUser = message.role === "user";
-  const hasProfile = message.role === "copilot" && !!message.profile;
+  const profile = message.role === "copilot" ? message.profile : undefined;
   return (
     <div className={`flex ${isUser ? "justify-end" : "justify-start"}`}>
       <div
@@ -234,10 +234,8 @@ function MessageBubble({ message }: { message: Message }) {
             : "border border-border bg-card text-foreground/90"
         }`}
       >
-        {hasProfile && message.role === "copilot" && (
-          <RiskReport profile={message.profile} />
-        )}
-        <div className={hasProfile ? "mt-3" : ""}>
+        {profile && <RiskReport profile={profile} />}
+        <div className={profile ? "mt-3" : ""}>
           <FormattedText text={message.content} />
         </div>
       </div>
