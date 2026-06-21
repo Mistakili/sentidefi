@@ -1,0 +1,1 @@
+ALTER TABLE public.risk_scans ADD COLUMN tx_hash TEXT;
