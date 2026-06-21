@@ -27,6 +27,7 @@ export type Database = {
           summary: string | null
           token_name: string | null
           token_symbol: string | null
+          tx_hash: string | null
         }
         Insert: {
           address: string
@@ -40,6 +41,7 @@ export type Database = {
           summary?: string | null
           token_name?: string | null
           token_symbol?: string | null
+          tx_hash?: string | null
         }
         Update: {
           address?: string
@@ -53,6 +55,7 @@ export type Database = {
           summary?: string | null
           token_name?: string | null
           token_symbol?: string | null
+          tx_hash?: string | null
         }
         Relationships: []
       }
