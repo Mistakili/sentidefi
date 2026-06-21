@@ -104,7 +104,7 @@ function Hero() {
 function RiskCard() {
   return (
     <div className="relative mx-auto mt-20 max-w-4xl">
-      <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-primary/20 via-transparent to-accent/20 blur-2xl" />
+      <div className="absolute inset-0 -z-10 rounded-3xl bg-primary/5" />
       <div className="rounded-3xl border border-border/80 bg-card/80 p-2 backdrop-blur-xl">
         <div className="rounded-2xl border border-border/60 bg-background/60 p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
