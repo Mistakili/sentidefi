@@ -14,7 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      risk_scans: {
+        Row: {
+          address: string
+          chain_id: number
+          created_at: string
+          id: string
+          level: string
+          on_chain_data: Json | null
+          reason_codes: string[] | null
+          score: number
+          summary: string | null
+          token_name: string | null
+          token_symbol: string | null
+        }
+        Insert: {
+          address: string
+          chain_id?: number
+          created_at?: string
+          id?: string
+          level: string
+          on_chain_data?: Json | null
+          reason_codes?: string[] | null
+          score: number
+          summary?: string | null
+          token_name?: string | null
+          token_symbol?: string | null
+        }
+        Update: {
+          address?: string
+          chain_id?: number
+          created_at?: string
+          id?: string
+          level?: string
+          on_chain_data?: Json | null
+          reason_codes?: string[] | null
+          score?: number
+          summary?: string | null
+          token_name?: string | null
+          token_symbol?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
