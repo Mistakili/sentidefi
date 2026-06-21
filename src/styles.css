@@ -97,9 +97,9 @@
   --sidebar-border: oklch(0.32 0.03 250);
   --sidebar-ring: oklch(0.82 0.17 85);
 
-  --gradient-hero: radial-gradient(ellipse 80% 60% at 50% -10%, oklch(0.82 0.17 85 / 0.18), transparent 60%), radial-gradient(ellipse 60% 50% at 80% 20%, oklch(0.65 0.18 200 / 0.12), transparent 60%);
-  --glow-gold: 0 0 60px oklch(0.82 0.17 85 / 0.35);
-  --glow-cyan: 0 0 40px oklch(0.65 0.18 200 / 0.3);
+  --gradient-hero: none;
+  --glow-gold: none;
+  --glow-cyan: none;
 }
 
 .dark {
