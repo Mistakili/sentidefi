@@ -342,7 +342,7 @@ function ForBuilders() {
               ))}
             </ul>
           </div>
-          <div className="overflow-hidden rounded-2xl border border-border bg-[#0b1020] shadow-[var(--glow-cyan)]">
+          <div className="overflow-hidden rounded-2xl border border-border bg-[#0b1020]">
             <div className="flex items-center gap-2 border-b border-border/60 px-4 py-3">
               <span className="size-2.5 rounded-full bg-destructive/70" />
               <span className="size-2.5 rounded-full bg-primary/70" />
