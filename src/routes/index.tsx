@@ -41,6 +41,7 @@ type Scan = {
   token_symbol: string | null;
   summary: string | null;
   created_at: string;
+  tx_hash: string | null;
 };
 
 function LiveFeed() {
@@ -51,7 +52,7 @@ function LiveFeed() {
     const load = async () => {
       const { data } = await supabase
         .from("risk_scans")
-        .select("id,address,score,level,token_name,token_symbol,summary,created_at")
+        .select("id,address,score,level,token_name,token_symbol,summary,created_at,tx_hash")
         .order("created_at", { ascending: false })
         .limit(6);
       if (!cancelled) setScans((data as Scan[] | null) ?? []);
@@ -137,7 +138,14 @@ function ScanCard({ scan }: { scan: Scan }) {
       {scan.summary && (
         <p className="mt-3 line-clamp-2 text-xs text-muted-foreground">{scan.summary}</p>
       )}
-      <div className="mt-3 text-[10px] uppercase tracking-wider text-muted-foreground">{ago}</div>
+      <div className="mt-3 flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground">
+        <span>{ago}</span>
+        {scan.tx_hash && (
+          <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2 py-0.5 font-mono normal-case text-emerald-400">
+            on-chain ✓
+          </span>
+        )}
+      </div>
     </a>
   );
 }
