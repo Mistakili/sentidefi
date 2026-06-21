@@ -201,8 +201,16 @@ function ToolView({ part }: { part: ToolPart }) {
       tokenName?: string | null;
       tokenSymbol?: string | null;
       address: string;
+      txHash?: string | null;
     };
     return <VerdictCard verdict={v} />;
+  }
+
+  if (toolName === "publishOnChain" && part.state === "output-available") {
+    const out = part.output as
+      | { ok: true; txHash: string; explorerUrl: string; attestor: string; registry: string }
+      | { ok: false; error: string; configRequired?: boolean };
+    return <OnChainCard result={out} />;
   }
 
   return (
@@ -241,6 +249,7 @@ function VerdictCard({
     tokenName?: string | null;
     tokenSymbol?: string | null;
     address: string;
+    txHash?: string | null;
   };
 }) {
   const color =
@@ -290,6 +299,46 @@ function VerdictCard({
   );
 }
 
+function OnChainCard({
+  result,
+}: {
+  result:
+    | { ok: true; txHash: string; explorerUrl: string; attestor: string; registry: string }
+    | { ok: false; error: string; configRequired?: boolean };
+}) {
+  if (!result.ok) {
+    if (result.configRequired) {
+      return (
+        <div className="my-3 rounded-lg border border-amber-400/40 bg-amber-400/10 px-3 py-2 text-xs text-amber-200">
+          <div className="font-semibold">On-chain attestation skipped</div>
+          <div className="mt-1 text-amber-100/70">
+            RiskRegistry contract not yet deployed. Off-chain verdict still published to public feed.
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="my-3 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+        On-chain publish failed: {result.error}
+      </div>
+    );
+  }
+  return (
+    <div className="my-3 rounded-lg border border-emerald-400/40 bg-emerald-400/10 p-3 text-xs">
+      <div className="flex items-center gap-2 font-semibold text-emerald-300">
+        <CheckIcon className="size-3" />
+        Attested on HSK testnet
+      </div>
+      <div className="mt-2 space-y-1 font-mono text-[10px] text-emerald-100/70">
+        <div>
+          tx: <a className="text-emerald-300 underline-offset-4 hover:underline" href={result.explorerUrl} target="_blank" rel="noreferrer">{result.txHash.slice(0, 14)}…{result.txHash.slice(-8)}</a>
+        </div>
+        <div>registry: {result.registry.slice(0, 10)}…{result.registry.slice(-6)}</div>
+        <div>attestor: {result.attestor.slice(0, 10)}…{result.attestor.slice(-6)}</div>
+      </div>
+    </div>
+  );
+}
 function ThinkingBubble() {
   return (
     <div className="flex justify-start">
