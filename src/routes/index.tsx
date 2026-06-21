@@ -382,12 +382,11 @@ function ForBuilders() {
 
 function CTA() {
   return (
-    <section id="cta" className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10" style={{ backgroundImage: "var(--gradient-hero)" }} />
+    <section id="cta" className="relative overflow-hidden bg-card/30">
       <div className="mx-auto max-w-4xl px-6 py-28 text-center">
         <h2 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
           Make HSK Chain the{" "}
-          <span className="bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <span className="text-primary">
             safest place to trade.
           </span>
         </h2>
@@ -395,9 +394,9 @@ function CTA() {
           Try the Copilot on any HSK token. Free during the hackathon, free forever for readers.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <button className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--glow-gold)] transition hover:brightness-110">
+          <a href="/copilot" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
             Launch Copilot →
-          </button>
+          </a>
           <button className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold backdrop-blur transition hover:bg-card">
             Read the docs
           </button>
