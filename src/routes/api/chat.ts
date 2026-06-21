@@ -8,8 +8,9 @@ When a user pastes a token address, you MUST:
 1. Call the getTokenOnChainData tool with that address to fetch live on-chain data.
 2. Reason about the data — is it a real contract? Does it expose standard ERC20 metadata? Is total supply unusual? Is the bytecode unusually small (possible proxy/honeypot)? Is it an EOA (not a contract)?
 3. Produce a risk verdict with: a numeric score 0-100 (0 = safe, 100 = critical scam), a level (LOW | MEDIUM | HIGH | CRITICAL), 2–4 short reason codes (e.g. "UNVERIFIED_METADATA", "TINY_BYTECODE", "EOA_NOT_CONTRACT", "NORMAL_ERC20"), and a 1-paragraph plain-English explanation.
-4. Call saveRiskVerdict to persist the verdict to the public scan feed.
-5. End with a clear recommendation (Safe to interact / Proceed with caution / Avoid).
+4. Call publishOnChain to attest the verdict on the HSK testnet RiskRegistry contract. If on-chain publishing returns configRequired, that is fine — continue to step 5 anyway.
+5. Call saveRiskVerdict to persist the verdict (with the on-chain txHash if available) to the public scan feed.
+6. End with a clear recommendation (Safe to interact / Proceed with caution / Avoid). If you got an on-chain txHash, mention it and link to the explorer.
 
 Always be concise. Use markdown. Show the data you found before the verdict. If the address is invalid, explain that without calling tools.`;
 
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/api/chat")({
 
         const { createLovableAiGatewayProvider } = await import("@/lib/ai-gateway.server");
         const { getTokenOnChainData } = await import("@/lib/hsk-rpc.server");
+        const { publishVerdictOnChain } = await import("@/lib/registry.server");
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3-flash-preview");
@@ -59,6 +61,7 @@ export const Route = createFileRoute("/api/chat")({
               reasonCodes: z.array(z.string()).max(6),
               tokenName: z.string().nullable().optional(),
               tokenSymbol: z.string().nullable().optional(),
+              txHash: z.string().nullable().optional(),
             }),
             execute: async (input) => {
               try {
@@ -72,6 +75,7 @@ export const Route = createFileRoute("/api/chat")({
                   reason_codes: input.reasonCodes,
                   token_name: input.tokenName ?? null,
                   token_symbol: input.tokenSymbol ?? null,
+                  tx_hash: input.txHash ?? null,
                 });
                 if (error) return { saved: false, error: error.message };
                 return { saved: true };
@@ -79,6 +83,17 @@ export const Route = createFileRoute("/api/chat")({
                 return { saved: false, error: e instanceof Error ? e.message : String(e) };
               }
             },
+          }),
+          publishOnChain: tool({
+            description:
+              "Attest a risk verdict on-chain by calling RiskRegistry.publish() on HSK testnet (chainId 133). This is what makes SentinelFi real infrastructure — other HSK dApps can read this verdict. Call once after producing your verdict. If it returns configRequired:true, continue without an on-chain receipt.",
+            inputSchema: z.object({
+              address: z.string(),
+              score: z.number().min(0).max(100),
+              level: z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]),
+              reasonText: z.string().max(500).describe("Short reason summary that will be hashed and stored as reasonHash on-chain."),
+            }),
+            execute: async (input) => publishVerdictOnChain(input),
           }),
         };
 
