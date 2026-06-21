@@ -82,10 +82,11 @@ export const Route = createFileRoute("/api/chat")({
           }),
         };
 
+        const modelMessages = await convertToModelMessages(messages as UIMessage[]);
         const result = streamText({
           model,
           system: SYSTEM_PROMPT,
-          messages: await convertToModelMessages(messages as UIMessage[]),
+          messages: modelMessages,
           tools,
           stopWhen: stepCountIs(50),
         });
