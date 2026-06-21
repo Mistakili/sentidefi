@@ -46,8 +46,8 @@ function Nav() {
           <a href="#builders" className="hover:text-foreground transition">For builders</a>
         </nav>
         <a
-          href="#cta"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--glow-gold)] transition hover:brightness-110"
+          href="/copilot"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:brightness-110"
         >
           Try the Copilot
         </a>
@@ -60,8 +60,7 @@ function Hero() {
   return (
     <section
       id="top"
-      className="relative overflow-hidden border-b border-border/40"
-      style={{ backgroundImage: "var(--gradient-hero)" }}
+      className="relative overflow-hidden border-b border-border/40 bg-background"
     >
       <GridBg />
       <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-20 md:pt-28">
@@ -72,7 +71,7 @@ function Hero() {
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
             The safety layer for{" "}
-            <span className="bg-gradient-to-br from-primary via-primary to-accent bg-clip-text text-transparent">
+            <span className="text-primary">
               HSK Chain DeFi
             </span>
           </h1>
@@ -82,8 +81,8 @@ function Hero() {
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
-              href="#cta"
-              className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--glow-gold)] transition hover:brightness-110"
+              href="/copilot"
+              className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110"
             >
               Launch Copilot →
             </a>
@@ -105,7 +104,7 @@ function Hero() {
 function RiskCard() {
   return (
     <div className="relative mx-auto mt-20 max-w-4xl">
-      <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-primary/20 via-transparent to-accent/20 blur-2xl" />
+      <div className="absolute inset-0 -z-10 rounded-3xl bg-primary/5" />
       <div className="rounded-3xl border border-border/80 bg-card/80 p-2 backdrop-blur-xl">
         <div className="rounded-2xl border border-border/60 bg-background/60 p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -343,7 +342,7 @@ function ForBuilders() {
               ))}
             </ul>
           </div>
-          <div className="overflow-hidden rounded-2xl border border-border bg-[#0b1020] shadow-[var(--glow-cyan)]">
+          <div className="overflow-hidden rounded-2xl border border-border bg-[#0b1020]">
             <div className="flex items-center gap-2 border-b border-border/60 px-4 py-3">
               <span className="size-2.5 rounded-full bg-destructive/70" />
               <span className="size-2.5 rounded-full bg-primary/70" />
@@ -383,12 +382,11 @@ function ForBuilders() {
 
 function CTA() {
   return (
-    <section id="cta" className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10" style={{ backgroundImage: "var(--gradient-hero)" }} />
+    <section id="cta" className="relative overflow-hidden bg-card/30">
       <div className="mx-auto max-w-4xl px-6 py-28 text-center">
         <h2 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
           Make HSK Chain the{" "}
-          <span className="bg-gradient-to-br from-primary to-accent bg-clip-text text-transparent">
+          <span className="text-primary">
             safest place to trade.
           </span>
         </h2>
@@ -396,9 +394,9 @@ function CTA() {
           Try the Copilot on any HSK token. Free during the hackathon, free forever for readers.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <button className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--glow-gold)] transition hover:brightness-110">
+          <a href="/copilot" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
             Launch Copilot →
-          </button>
+          </a>
           <button className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold backdrop-blur transition hover:bg-card">
             Read the docs
           </button>
