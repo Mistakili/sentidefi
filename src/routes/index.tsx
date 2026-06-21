@@ -60,8 +60,7 @@ function Hero() {
   return (
     <section
       id="top"
-      className="relative overflow-hidden border-b border-border/40"
-      style={{ backgroundImage: "var(--gradient-hero)" }}
+      className="relative overflow-hidden border-b border-border/40 bg-background"
     >
       <GridBg />
       <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-20 md:pt-28">
@@ -72,7 +71,7 @@ function Hero() {
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
             The safety layer for{" "}
-            <span className="bg-gradient-to-br from-primary via-primary to-accent bg-clip-text text-transparent">
+            <span className="text-primary">
               HSK Chain DeFi
             </span>
           </h1>
@@ -82,8 +81,8 @@ function Hero() {
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
-              href="#cta"
-              className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-[var(--glow-gold)] transition hover:brightness-110"
+              href="/copilot"
+              className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110"
             >
               Launch Copilot →
             </a>
