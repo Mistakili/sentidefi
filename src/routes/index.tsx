@@ -46,8 +46,8 @@ function Nav() {
           <a href="#builders" className="hover:text-foreground transition">For builders</a>
         </nav>
         <a
-          href="#cta"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[var(--glow-gold)] transition hover:brightness-110"
+          href="/copilot"
+          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:brightness-110"
         >
           Try the Copilot
         </a>
