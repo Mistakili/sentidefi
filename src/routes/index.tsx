@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,10 +25,129 @@ function Index() {
       <HowItWorks />
       <Features />
       <ForBuilders />
+      <LiveFeed />
       <CTA />
       <Footer />
     </div>
   );
+}
+
+type Scan = {
+  id: string;
+  address: string;
+  score: number;
+  level: string;
+  token_name: string | null;
+  token_symbol: string | null;
+  summary: string | null;
+  created_at: string;
+};
+
+function LiveFeed() {
+  const [scans, setScans] = useState<Scan[] | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const { data } = await supabase
+        .from("risk_scans")
+        .select("id,address,score,level,token_name,token_symbol,summary,created_at")
+        .order("created_at", { ascending: false })
+        .limit(6);
+      if (!cancelled) setScans((data as Scan[] | null) ?? []);
+    };
+    load();
+    const channel = supabase
+      .channel("risk_scans_feed")
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "risk_scans" }, () => load())
+      .subscribe();
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  return (
+    <section className="border-y border-border/40 bg-card/20 py-20">
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="mb-10 flex items-end justify-between gap-4">
+          <div>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-400">
+              <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              LIVE FEED
+            </div>
+            <h2 className="text-3xl font-bold md:text-4xl">Recently scanned on HSK Chain</h2>
+            <p className="mt-2 text-muted-foreground">Every Copilot verdict is published to a public registry. Anyone can read it. Any dApp can integrate it.</p>
+          </div>
+        </div>
+
+        {scans === null ? (
+          <div className="text-sm text-muted-foreground">Loading feed…</div>
+        ) : scans.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-border bg-background/40 p-10 text-center text-sm text-muted-foreground">
+            No scans yet. <a href="/copilot" className="text-primary underline-offset-4 hover:underline">Be the first to run a scan →</a>
+          </div>
+        ) : (
+          <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+            {scans.map((s) => (
+              <ScanCard key={s.id} scan={s} />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ScanCard({ scan }: { scan: Scan }) {
+  const color =
+    scan.level === "LOW"
+      ? "text-emerald-400"
+      : scan.level === "MEDIUM"
+      ? "text-amber-400"
+      : "text-destructive";
+  const bg =
+    scan.level === "LOW"
+      ? "bg-emerald-400/15"
+      : scan.level === "MEDIUM"
+      ? "bg-amber-400/15"
+      : "bg-destructive/15";
+  const when = new Date(scan.created_at);
+  const ago = timeAgo(when);
+  return (
+    <a
+      href="/copilot"
+      className="group rounded-xl border border-border bg-background/60 p-4 transition hover:border-primary/40"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <div className="truncate text-sm font-semibold">
+            {scan.token_name || "Unknown token"}{" "}
+            {scan.token_symbol && <span className="text-muted-foreground">({scan.token_symbol})</span>}
+          </div>
+          <div className="font-mono text-[11px] text-muted-foreground">
+            {scan.address.slice(0, 10)}…{scan.address.slice(-6)}
+          </div>
+        </div>
+        <div className="text-right">
+          <div className={`text-2xl font-bold ${color}`}>{scan.score}</div>
+          <span className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${color} ${bg}`}>{scan.level}</span>
+        </div>
+      </div>
+      {scan.summary && (
+        <p className="mt-3 line-clamp-2 text-xs text-muted-foreground">{scan.summary}</p>
+      )}
+      <div className="mt-3 text-[10px] uppercase tracking-wider text-muted-foreground">{ago}</div>
+    </a>
+  );
+}
+
+function timeAgo(date: Date): string {
+  const s = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (s < 60) return `${s}s ago`;
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
 }
 
 function Nav() {
