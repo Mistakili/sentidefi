@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
+import { Route as DocsRouteImport } from './routes/docs'
 import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -17,6 +18,11 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DocsRoute = DocsRouteImport.update({
+  id: '/docs',
+  path: '/docs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CopilotRoute = CopilotRouteImport.update({
@@ -38,12 +44,14 @@ const ApiChatRoute = ApiChatRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/docs': typeof DocsRoute
   '/portfolio': typeof PortfolioRoute
   '/api/chat': typeof ApiChatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/docs': typeof DocsRoute
   '/portfolio': typeof PortfolioRoute
   '/api/chat': typeof ApiChatRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/docs': typeof DocsRoute
   '/portfolio': typeof PortfolioRoute
   '/api/chat': typeof ApiChatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/copilot' | '/portfolio' | '/api/chat'
+  fullPaths: '/' | '/copilot' | '/docs' | '/portfolio' | '/api/chat'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/copilot' | '/portfolio' | '/api/chat'
-  id: '__root__' | '/' | '/copilot' | '/portfolio' | '/api/chat'
+  to: '/' | '/copilot' | '/docs' | '/portfolio' | '/api/chat'
+  id: '__root__' | '/' | '/copilot' | '/docs' | '/portfolio' | '/api/chat'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CopilotRoute: typeof CopilotRoute
+  DocsRoute: typeof DocsRoute
   PortfolioRoute: typeof PortfolioRoute
   ApiChatRoute: typeof ApiChatRoute
 }
@@ -76,6 +86,13 @@ declare module '@tanstack/react-router' {
       path: '/portfolio'
       fullPath: '/portfolio'
       preLoaderRoute: typeof PortfolioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/docs': {
+      id: '/docs'
+      path: '/docs'
+      fullPath: '/docs'
+      preLoaderRoute: typeof DocsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/copilot': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CopilotRoute: CopilotRoute,
+  DocsRoute: DocsRoute,
   PortfolioRoute: PortfolioRoute,
   ApiChatRoute: ApiChatRoute,
 }
