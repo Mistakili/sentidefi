@@ -611,8 +611,7 @@ function Footer() {
         </div>
         <div className="flex gap-5">
           <a href="/docs" className="hover:text-foreground">Docs</a>
-          <a href="#features" className="hover:text-foreground">GitHub</a>
-          <a href="#cta" className="hover:text-foreground">Twitter</a>
+          <a href="https://github.com/mistakili" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">GitHub</a>
         </div>
       </div>
     </footer>
