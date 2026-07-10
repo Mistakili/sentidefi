@@ -200,9 +200,7 @@ function Hero() {
             Trust Infrastructure for Autonomous Finance
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            The trust layer every wallet, protocol, and agent{" "}
-            <span className="text-primary">calls</span>{" "}
-            before touching an EVM chain.
+            Trust Before Execution.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
             Every autonomous action needs a risk check. SentinelFi is the shared, public{" "}
