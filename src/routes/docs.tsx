@@ -3,17 +3,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/docs")({
   head: () => ({
     meta: [
-      { title: "SentinelFi Docs — Whitepaper & Copilot Guide" },
+      { title: "SentinelFi Docs — MCP-Native Risk Infrastructure for EVM DeFi" },
       {
         name: "description",
         content:
-          "How SentinelFi works: on-chain risk registry, AI Copilot tools, portfolio insight, and strategy engine for HSK Chain DeFi.",
+          "How SentinelFi works: MCP server, risk scans, portfolio insight, and public dataset. Agent-callable safety infrastructure for HSK and every EVM.",
       },
-      { property: "og:title", content: "SentinelFi Docs — Whitepaper" },
+      { property: "og:title", content: "SentinelFi Docs — MCP-Native Risk Infrastructure" },
       {
         property: "og:description",
         content:
-          "The safety layer for HSK Chain DeFi. Risk scans, portfolio analysis, and AI strategy — explained.",
+          "The agent-callable safety layer for EVM DeFi. HSK-native, chain-agnostic, MCP-first — explained.",
       },
       { property: "og:type", content: "article" },
     ],
