@@ -180,7 +180,6 @@ function PortfolioView({
           </div>
           <Link
             to="/copilot"
-            search={{ address }}
             className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:brightness-110"
           >
             Open Copilot →

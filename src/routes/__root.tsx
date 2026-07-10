@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { WalletProvider } from "../lib/wallet";
 
 function NotFoundComponent() {
   return (
@@ -77,16 +78,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Horizon AI DeFi enables intelligent financial infrastructure by integrating AI with decentralized finance on HSK Chain." },
+      { title: "SentinelFi — AI Financial Guardian for HSK Chain" },
+      { name: "description", content: "Connect your wallet and talk to your portfolio. SentinelFi is the AI guardian for HSK Chain DeFi — risk scores, portfolio insight, and one-click strategy." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Horizon AI DeFi enables intelligent financial infrastructure by integrating AI with decentralized finance on HSK Chain." },
+      { property: "og:title", content: "SentinelFi — AI Financial Guardian for HSK Chain" },
+      { property: "og:description", content: "Talk to your HSK Chain portfolio. Risk, insight, and AI strategy in one place." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Horizon AI DeFi enables intelligent financial infrastructure by integrating AI with decentralized finance on HSK Chain." },
+      { name: "twitter:title", content: "SentinelFi — AI Financial Guardian for HSK Chain" },
+      { name: "twitter:description", content: "Talk to your HSK Chain portfolio. Risk, insight, and AI strategy in one place." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4bdabb68-b448-447f-a882-820eceba6f77/id-preview-f1464303--7d46a9ee-736b-4947-9159-5080f94f6e4d.lovable.app-1782025660534.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4bdabb68-b448-447f-a882-820eceba6f77/id-preview-f1464303--7d46a9ee-736b-4947-9159-5080f94f6e4d.lovable.app-1782025660534.png" },
     ],
@@ -122,8 +123,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <WalletProvider>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+      </WalletProvider>
     </QueryClientProvider>
   );
 }
