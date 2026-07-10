@@ -1,18 +1,16 @@
-import { HSK_TOKENS, type TrackedToken } from "./hsk-tokens";
-
-const HSK_RPC_URL = "https://mainnet.hsk.xyz";
+import { DEFAULT_CHAIN_ID, getLiveChain, type Chain, type ChainToken } from "./chains";
 
 type RpcResponse<T> = { result?: T; error?: { code: number; message: string } };
 
-async function rpc<T>(method: string, params: unknown[]): Promise<T> {
-  const res = await fetch(HSK_RPC_URL, {
+async function rpc<T>(rpcUrl: string, method: string, params: unknown[]): Promise<T> {
+  const res = await fetch(rpcUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
   });
-  if (!res.ok) throw new Error(`HSK RPC ${method}: ${res.status}`);
+  if (!res.ok) throw new Error(`RPC ${method}: ${res.status}`);
   const json = (await res.json()) as RpcResponse<T>;
-  if (json.error) throw new Error(`HSK RPC ${method}: ${json.error.message}`);
+  if (json.error) throw new Error(`RPC ${method}: ${json.error.message}`);
   return json.result as T;
 }
 
@@ -20,10 +18,10 @@ function padAddress(addr: string): string {
   return addr.toLowerCase().replace(/^0x/, "").padStart(64, "0");
 }
 
-async function balanceOf(token: string, holder: string): Promise<bigint> {
+async function balanceOf(rpcUrl: string, token: string, holder: string): Promise<bigint> {
   // balanceOf(address) selector: 0x70a08231
   const data = "0x70a08231" + padAddress(holder);
-  const hex = await rpc<string>("eth_call", [{ to: token, data }, "latest"]);
+  const hex = await rpc<string>(rpcUrl, "eth_call", [{ to: token, data }, "latest"]);
   if (!hex || hex === "0x") return 0n;
   return BigInt(hex);
 }
@@ -52,7 +50,7 @@ async function getPrices(ids: string[]): Promise<Record<string, number>> {
 }
 
 export type Holding = {
-  token: TrackedToken;
+  token: ChainToken;
   balanceRaw: string;
   balance: number;
   priceUsd: number | null;
@@ -62,22 +60,28 @@ export type Holding = {
 export type WalletPortfolio = {
   address: string;
   chainId: number;
+  chainName: string;
   fetchedAt: string;
   holdings: Holding[];
   totalValueUsd: number | null;
 };
 
-export async function fetchWalletPortfolio(address: string): Promise<WalletPortfolio> {
+export async function fetchWalletPortfolio(
+  address: string,
+  chainId: number = DEFAULT_CHAIN_ID,
+): Promise<WalletPortfolio> {
   const addr = address.toLowerCase();
   if (!/^0x[a-f0-9]{40}$/.test(addr)) throw new Error("Invalid address");
 
+  const chain: Chain = getLiveChain(chainId);
+
   const results = await Promise.all(
-    HSK_TOKENS.map(async (token) => {
+    chain.tokens.map(async (token) => {
       try {
         const raw =
           token.address === "native"
-            ? BigInt(await rpc<string>("eth_getBalance", [addr, "latest"]))
-            : await balanceOf(token.address, addr);
+            ? BigInt(await rpc<string>(chain.rpcUrl, "eth_getBalance", [addr, "latest"]))
+            : await balanceOf(chain.rpcUrl, token.address, addr);
         const balance = Number(raw) / 10 ** token.decimals;
         return { token, balanceRaw: raw.toString(), balance };
       } catch {
@@ -86,7 +90,7 @@ export async function fetchWalletPortfolio(address: string): Promise<WalletPortf
     }),
   );
 
-  const ids = HSK_TOKENS.map((t) => t.coingeckoId).filter((x): x is string => !!x);
+  const ids = chain.tokens.map((t) => t.coingeckoId).filter((x): x is string => !!x);
   const prices = await getPrices(ids);
 
   const holdings: Holding[] = results.map((r) => {
@@ -102,7 +106,8 @@ export async function fetchWalletPortfolio(address: string): Promise<WalletPortf
 
   return {
     address: addr,
-    chainId: 177,
+    chainId: chain.id,
+    chainName: chain.name,
     fetchedAt: new Date().toISOString(),
     holdings,
     totalValueUsd,
