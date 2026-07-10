@@ -6,10 +6,10 @@ import { WalletButton } from "@/components/WalletButton";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SentinelFi — MCP-Native Risk Infrastructure for EVM DeFi" },
-      { name: "description", content: "Agent-callable safety layer for HSK, BotChain, and every EVM. One MCP endpoint, three read-only tools: any wallet, protocol, or AI can plug in in minutes." },
-      { property: "og:title", content: "SentinelFi — MCP-Native Risk Infrastructure" },
-      { property: "og:description", content: "The agent-callable safety layer for EVM DeFi. HSK-native, chain-agnostic, MCP-first." },
+      { title: "SentinelFi — Public Risk Infrastructure for EVM DeFi" },
+      { name: "description", content: "Public safety layer for HSK, BotChain, and every EVM. Use it in the Copilot, via the MCP endpoint, or query the public verdict feed — any wallet, protocol, or AI can plug in in minutes." },
+      { property: "og:title", content: "SentinelFi — Public Risk Infrastructure for EVM DeFi" },
+      { property: "og:description", content: "The public safety layer for EVM DeFi. Built for humans and AI agents. HSK-native, chain-agnostic, MCP-first." },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -83,7 +83,7 @@ function LiveFeed() {
               LIVE FEED
             </div>
             <h2 className="text-3xl font-bold md:text-4xl">Recently scanned on HSK Chain</h2>
-            <p className="mt-2 text-muted-foreground">Every Copilot verdict is published to a public registry. Anyone can read it. Any dApp can integrate it.</p>
+            <p className="mt-2 text-muted-foreground">Every scan is published to a public registry. Anyone can read it. Any dApp or agent can integrate it.</p>
           </div>
         </div>
 
@@ -200,13 +200,13 @@ function Hero() {
             HSK On-Chain Horizon · MCP-native · Chain-agnostic
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            Give your AI{" "}
+            Give every user{" "}
             <span className="text-primary">eyes</span>{" "}
-            before you give it keys.
+            before they give up keys.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-            SentinelFi is the public risk <span className="text-foreground">infrastructure</span> AI
-            agents call before they touch any EVM protocol. One MCP endpoint. Three read-only tools.
+            SentinelFi is the public risk <span className="text-foreground">infrastructure</span> humans
+            and AI agents call before they touch any EVM protocol. Copilot, MCP endpoint, or public feed.
             HSK-native. Chain-agnostic.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
@@ -342,7 +342,7 @@ function TrustBar() {
           ["1 endpoint", "/mcp — public, no login, no key"],
           ["3 tools", "scan · portfolio · scan history"],
           ["Any EVM", "HSK live · BotChain-ready · chain-agnostic"],
-          ["Any agent", "Claude · ChatGPT · Cursor · Codex"],
+          ["Any user or agent", "Claude · ChatGPT · MetaMask · Copilot"],
         ].map(([n, l]) => (
           <div key={l} className="text-center">
             <div className="text-2xl font-bold text-primary md:text-3xl">{n}</div>
@@ -371,10 +371,10 @@ function WhyNow() {
         <div className="mx-auto max-w-2xl text-center">
           <div className="text-xs font-semibold uppercase tracking-wider text-primary">Why now</div>
           <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-            AI agents are becoming the users of crypto.
+            AI agents are joining humans as users of crypto.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
-            They can execute transactions. They can't judge risk. That's the gap.
+            Both can execute transactions. Neither should have to judge risk alone. That's the gap.
           </p>
         </div>
         <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
@@ -442,7 +442,7 @@ function BuiltFor() {
     <section className="border-b border-border/40">
       <div className="mx-auto max-w-6xl px-6 py-14 text-center">
         <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Built for every MCP-aware client and EIP-1193 wallet
+          Built for humans, wallets, and AI agents
         </div>
         <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
           {clients.map((c) => (
@@ -452,7 +452,7 @@ function BuiltFor() {
           ))}
         </div>
         <p className="mx-auto mt-6 max-w-xl text-xs text-muted-foreground">
-          Any MCP-compatible assistant connects with one URL. Any EIP-1193 wallet reads the same public verdict feed. No SDK, no partnership, no gatekeeper.
+          Use the Copilot in your browser, connect an MCP assistant, or read the public verdict feed directly. Same data, same trust model, whichever surface you prefer.
         </p>
       </div>
     </section>
@@ -473,9 +473,9 @@ function _Problem() {
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
               GoPlus, De.Fi, Honeypot.is — none cover HSK. And every one of them is a website,
-              not a protocol. Wallets, launchpads, and AI agents can't plug in. Users fly blind,
-              builders reinvent the same scanner, chains stay cold. SentinelFi fixes all three
-              with one shared primitive.
+              not a protocol. Human traders, wallets, launchpads, and AI agents can't plug in.
+              Users fly blind, builders reinvent the same scanner, chains stay cold. SentinelFi
+              fixes all three with one shared primitive.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -722,14 +722,14 @@ function CTA() {
     <section id="cta" className="relative overflow-hidden bg-card/30">
       <div className="mx-auto max-w-4xl px-6 py-28 text-center">
         <h2 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
-          Give your AI{" "}
-          <span className="text-primary">eyes</span>{" "}
-          before you give it keys.
+          Don't sign blind.{" "}
+          <span className="text-primary">Scan first.</span>
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
-          Every AI agent should know what it's touching before it signs. Point your favorite MCP client at{" "}
-          <span className="font-mono text-foreground">sentidefi.lovable.app/mcp</span>{" "}
-          — or try the Copilot yourself.
+          Every user and every AI agent should know what they're touching before they sign. Try the Copilot,
+          point your MCP client at{" "}
+          <span className="font-mono text-foreground">sentidefi.lovable.app/mcp</span>,
+          or query the public feed directly.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <a href="/copilot" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
