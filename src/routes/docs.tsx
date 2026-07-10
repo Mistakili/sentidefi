@@ -3,17 +3,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/docs")({
   head: () => ({
     meta: [
-      { title: "SentinelFi Docs — Whitepaper & Copilot Guide" },
+      { title: "SentinelFi Docs — MCP-Native Risk Infrastructure for EVM DeFi" },
       {
         name: "description",
         content:
-          "How SentinelFi works: on-chain risk registry, AI Copilot tools, portfolio insight, and strategy engine for HSK Chain DeFi.",
+          "How SentinelFi works: MCP server, risk scans, portfolio insight, and public dataset. Agent-callable safety infrastructure for HSK and every EVM.",
       },
-      { property: "og:title", content: "SentinelFi Docs — Whitepaper" },
+      { property: "og:title", content: "SentinelFi Docs — MCP-Native Risk Infrastructure" },
       {
         property: "og:description",
         content:
-          "The safety layer for HSK Chain DeFi. Risk scans, portfolio analysis, and AI strategy — explained.",
+          "The agent-callable safety layer for EVM DeFi. HSK-native, chain-agnostic, MCP-first — explained.",
       },
       { property: "og:type", content: "article" },
     ],
@@ -23,13 +23,15 @@ export const Route = createFileRoute("/docs")({
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
+  { id: "mcp", label: "MCP Server" },
   { id: "copilot", label: "The Copilot" },
   { id: "risk", label: "Risk Scans" },
   { id: "portfolio", label: "Portfolio Insight" },
   { id: "strategy", label: "Strategy Engine" },
-  { id: "onchain", label: "On-Chain Registry" },
+  { id: "onchain", label: "Public Registry" },
   { id: "architecture", label: "Architecture" },
   { id: "chains", label: "Supported Chains" },
+  { id: "positioning", label: "Why We're Different" },
   { id: "roadmap", label: "Roadmap" },
   { id: "faq", label: "FAQ" },
 ];
@@ -72,36 +74,64 @@ function DocsPage() {
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
             v0.1 · Whitepaper
           </div>
-          <h1>SentinelFi — The Safety Layer for HSK Chain DeFi</h1>
+          <h1>SentinelFi — MCP-Native Risk Infrastructure for EVM DeFi</h1>
           <p className="text-lg text-muted-foreground">
-            Your AI Financial Guardian. Talk to your portfolio, spot risks before you sign,
-            and let a single conversational agent do the work of a dozen dashboards.
+            The agent-callable safety layer for HSK, BotChain, and every EVM. One public MCP
+            endpoint. Three read-only tools. Any wallet, protocol, or AI assistant plugs in
+            in minutes — no SDK, no keys, no scraping.
           </p>
 
           <section id="overview">
             <h2>1. Overview</h2>
             <p>
-              DeFi on any new chain is fragmented. Users bounce between wallets, bridges,
-              DEXs, lending markets, staking dashboards, block explorers, and Telegram
-              groups just to answer one question: <em>is this safe, and what should I do?</em>
+              Every new chain has the same cold-start problem: wallets won't integrate without
+              safety data; safety data doesn't exist without scanners; scanners don't build for
+              small chains. Meanwhile the existing scanners (GoPlus, De.Fi, Honeypot.is) are
+              websites, not protocols — nothing else can plug in.
             </p>
             <p>
-              SentinelFi collapses that surface into one interface — a conversational AI
-              Copilot that reads live on-chain data, produces risk verdicts, analyzes
-              wallets, and proposes strategies. Every verdict is published to a public
-              on-chain <strong>Risk Registry</strong> so other HSK dApps can consume it.
+              SentinelFi is built the opposite way: <strong>infrastructure first, UI second</strong>.
+              The same engine that powers our Copilot ships as a public MCP server, so any
+              wallet, launchpad, DEX, or AI assistant can call it directly. HSK is the launch
+              chain; the architecture is chain-agnostic from day one.
             </p>
+          </section>
+
+          <section id="mcp">
+            <h2>2. MCP Server</h2>
             <p>
-              We are not another dashboard. We are the safety layer other dApps embed.
+              SentinelFi exposes a public <a href="/mcp"><code>/mcp</code></a> endpoint that
+              speaks the Model Context Protocol. No auth. No API keys. Add the URL to Claude,
+              ChatGPT, Cursor, Codex, or any MCP-aware client and three tools appear:
+            </p>
+            <ul>
+              <li>
+                <code>scan_token</code> — live on-chain read for any EVM contract: metadata,
+                supply, contract-vs-EOA, bytecode size. Returns a compact structured verdict.
+              </li>
+              <li>
+                <code>get_wallet_portfolio</code> — native + tracked ERC20 balances with USD
+                values and total for any address on any supported chain.
+              </li>
+              <li>
+                <code>list_recent_risk_scans</code> — the public verdict feed. Optional
+                address filter. Score, level, summary, and tx hash.
+              </li>
+            </ul>
+            <p>
+              Every tool is <code>readOnlyHint: true</code> and touches only already-public
+              data — safe to expose without login. Wallets can warn users pre-sign; launchpads
+              can gate listings; AI assistants can answer "is this token safe?" natively.
             </p>
           </section>
 
           <section id="copilot">
-            <h2>2. The Copilot</h2>
+            <h2>3. The Copilot</h2>
             <p>
-              The Copilot is a streaming LLM agent with three tool categories. The model
-              is stateless per request — the client sends the full conversation and the
-              server binds it to a fresh set of tools each turn.
+              The Copilot is our reference client for the same tools that ship over MCP.
+              It's a streaming LLM agent that routes intent automatically — token scans,
+              wallet lookups, strategy suggestions — so users get the shortest path to an
+              answer.
             </p>
             <h3>What you can ask</h3>
             <ul>
@@ -136,7 +166,7 @@ function DocsPage() {
           </section>
 
           <section id="risk">
-            <h2>3. Risk Scans</h2>
+            <h2>4. Risk Scans</h2>
             <p>
               When you submit a token address, the Copilot calls{" "}
               <code>getTokenOnChainData</code> against an HSK RPC node and inspects:
@@ -163,7 +193,7 @@ function DocsPage() {
           </section>
 
           <section id="portfolio">
-            <h2>4. Portfolio Insight</h2>
+            <h2>5. Portfolio Insight</h2>
             <p>
               With a connected wallet, the Copilot calls{" "}
               <code>getWalletPortfolio</code>, which reads native balance and tracked
@@ -184,7 +214,7 @@ function DocsPage() {
           </section>
 
           <section id="strategy">
-            <h2>5. Strategy Engine</h2>
+            <h2>6. Strategy Engine</h2>
             <p>
               After a portfolio read, the Copilot can call <code>suggestStrategy</code>,
               which is rendered as an actionable card:
@@ -205,23 +235,27 @@ function DocsPage() {
           </section>
 
           <section id="onchain">
-            <h2>6. On-Chain Registry</h2>
+            <h2>7. Public Registry</h2>
             <p>
-              Every finalized verdict is published to a <code>RiskRegistry</code>{" "}
-              contract on HSK, keyed by the token address. Anyone — wallets, DEX
-              front-ends, aggregators, other AI agents — can read the registry with a
-              single <code>view</code> call before letting a user sign a swap.
+              Every finalized verdict is written to a public dataset with a tx hash for
+              provenance. Anyone — wallets, DEX front-ends, aggregators, other AI agents —
+              can read the feed over MCP (<code>list_recent_risk_scans</code>) or query it
+              directly. An on-chain <code>RiskRegistry</code> contract on HSK mirrors the
+              feed for fully trust-minimized reads.
             </p>
             <p>
               This is what makes SentinelFi <strong>infrastructure</strong>, not just
-              another dashboard. Verdicts are attributable, composable, and
-              censorship-resistant.
+              another dashboard. Verdicts are attributable, composable, and inspectable.
             </p>
           </section>
 
           <section id="architecture">
-            <h2>7. Architecture</h2>
+            <h2>8. Architecture</h2>
             <ul>
+              <li>
+                <strong>MCP server</strong> — <code>@lovable.dev/mcp-js</code> mounted at{" "}
+                <code>/mcp</code>. Tools defined in <code>src/lib/mcp/tools/*</code>.
+              </li>
               <li>
                 <strong>Frontend</strong> — TanStack Start (React 19, SSR, Vite 7),
                 Tailwind v4, streaming AI SDK chat UI.
@@ -252,7 +286,7 @@ function DocsPage() {
           </section>
 
           <section id="chains">
-            <h2>8. Supported Chains</h2>
+            <h2>9. Supported Chains</h2>
             <p>
               SentinelFi is chain-agnostic at the code level. Adding a new EVM chain
               is a single entry in <code>src/lib/chains.ts</code>: chain id, RPC URL,
@@ -261,27 +295,87 @@ function DocsPage() {
             <ul>
               <li><strong>HSK Chain</strong> (chainId 177) — live.</li>
               <li><strong>HSK Testnet</strong> (chainId 133) — used for on-chain attestation.</li>
-              <li>More EVM chains (including BotChain) — scaffolded, enable per launch.</li>
+              <li><strong>BotChain</strong> — scaffolded, enable per launch.</li>
+              <li><strong>Any EVM</strong> (Base, BSC, Arbitrum, etc.) — drop-in via <code>chains.ts</code>.</li>
+            </ul>
+          </section>
+
+          <section id="positioning">
+            <h2>10. Why we're different</h2>
+            <p>
+              The scanning category is crowded — GoPlus, De.Fi Scanner, Honeypot.is,
+              TokenSniffer, Quick Intel. We are not trying to out-heuristic them today.
+              We are changing the <em>shape</em> of the product:
+            </p>
+            <ul>
+              <li>
+                <strong>MCP-first delivery.</strong> Competitors ship websites and REST APIs.
+                We ship an agent-callable protocol. Wallets and AI assistants integrate in
+                minutes, not sprints.
+              </li>
+              <li>
+                <strong>HSK-native from day one.</strong> No major scanner covers HSK yet.
+                On a chain with almost no tooling, being the default safety layer is a real
+                moat while it lasts.
+              </li>
+              <li>
+                <strong>Chain-agnostic core.</strong> One <code>chains.ts</code> entry adds a
+                new EVM. BotChain and any HSK-adjacent chain inherit the whole MCP surface for
+                free.
+              </li>
+              <li>
+                <strong>Explainable, not black-box.</strong> Every verdict cites the on-chain
+                evidence it used. Integrating protocols can audit and challenge the logic.
+              </li>
+              <li>
+                <strong>Public dataset.</strong> The verdict feed is queryable by anyone.
+                Researchers, dashboards, and other agents can build on it directly.
+              </li>
+            </ul>
+            <h3>Honest weaknesses (and what we're doing about them)</h3>
+            <ul>
+              <li>
+                <strong>Scoring depth.</strong> Today we check on-chain metadata and bytecode.
+                Competitors also simulate honeypots, tax, and mint/blacklist/pause paths.{" "}
+                <em>Next:</em> liquidity locks, ownership renouncement, and honeypot + tax
+                simulation.
+              </li>
+              <li>
+                <strong>No behavioral analysis yet.</strong> No whale tracking, deployer
+                history, or rug-pattern matching.{" "}
+                <em>Next:</em> derive these signals from the growing public dataset.
+              </li>
+              <li>
+                <strong>Trust bootstrapping.</strong> "Why should I trust your score?" is a
+                fair question for any new scanner.{" "}
+                <em>Next:</em> publish the scoring rules as versioned, auditable, open-source
+                rulesets so integrators can verify and challenge the logic.
+              </li>
             </ul>
           </section>
 
           <section id="roadmap">
-            <h2>9. Roadmap</h2>
+            <h2>11. Roadmap</h2>
             <ol>
-              <li>Live risk scans + on-chain registry (shipped).</li>
-              <li>Wallet portfolio + AI strategy suggestions (shipped).</li>
+              <li>Public MCP server with 3 read-only tools (shipped).</li>
+              <li>HSK-native on-chain reads + Copilot intent routing (shipped).</li>
+              <li>Chain-agnostic registry (<code>chains.ts</code>) + public verdict feed (shipped).</li>
+              <li>Deeper scoring: liquidity locks, ownership, mint/blacklist/pause, honeypot simulation.</li>
+              <li>Behavioral signals: whale movement, deployer history, rug-pattern matching.</li>
+              <li>Open, versioned scoring methodology for integrator auditability.</li>
+              <li>Multi-chain rollout: BotChain, Base, BSC, and beyond on the same MCP surface.</li>
               <li>One-click strategy execution via HSK DEX router.</li>
-              <li>Continuous monitoring: alerts when a held token’s verdict changes.</li>
-              <li>
-                Embeddable <code>&lt;SafeSwap /&gt;</code> component for other HSK
-                dApps.
-              </li>
-              <li>Cross-chain portfolio view (BotChain and beyond).</li>
+              <li>Continuous monitoring: alerts when a held token's verdict changes.</li>
             </ol>
           </section>
 
           <section id="faq">
-            <h2>10. FAQ</h2>
+            <h2>12. FAQ</h2>
+            <h3>How do I connect SentinelFi to Claude / ChatGPT / Cursor?</h3>
+            <p>
+              Add <code>https://sentidefi.lovable.app/mcp</code> as an MCP server in your
+              client. The three tools appear automatically — no keys, no login.
+            </p>
             <h3>Does SentinelFi ever move my funds?</h3>
             <p>
               No. The Copilot only reads on-chain data and produces recommendations.
