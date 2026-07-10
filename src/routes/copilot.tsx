@@ -363,7 +363,16 @@ function OnChainCard({
   );
 }
 function ThinkingBubble() {
-  return null;
+  return (
+    <div className="flex justify-start">
+      <div className="rounded-2xl border border-border bg-card px-5 py-3 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <ActivityIcon className="size-4 animate-spin text-primary" />
+          Thinking…
+        </div>
+      </div>
+    </div>
+  );
 }
 
 type PortfolioToolOutput =
@@ -502,18 +511,6 @@ function StrategyCard({ strategy }: { strategy: StrategyInput }) {
   );
 }
 
-function _ThinkingBubbleReal() {
-  return (
-    <div className="flex justify-start">
-      <div className="rounded-2xl border border-border bg-card px-5 py-3 text-sm text-muted-foreground">
-        <div className="flex items-center gap-2">
-          <ActivityIcon className="size-4 animate-spin text-primary" />
-          Thinking…
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* icons */
 type IconProps = { className?: string };
