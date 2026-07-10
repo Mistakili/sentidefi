@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { HSK_CHAIN } from "./hsk-tokens";
+import { DEFAULT_CHAIN_ID, LIVE_CHAINS, getChain, getLiveChain, type Chain } from "./chains";
 
 type EthereumProvider = {
   request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
@@ -28,7 +28,9 @@ type WalletState = {
   error: string | null;
   connect: () => Promise<void>;
   disconnect: () => void;
-  switchToHsk: () => Promise<void>;
+  switchChain: (chainId: number) => Promise<void>;
+  activeChain: Chain;
+  isSupportedChain: boolean;
   hasWallet: boolean;
 };
 
@@ -83,12 +85,13 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const switchToHsk = useCallback(async () => {
+  const switchChain = useCallback(async (targetId: number) => {
     if (!window.ethereum) throw new Error("No wallet detected");
+    const chain = getLiveChain(targetId);
     try {
       await window.ethereum.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: HSK_CHAIN.chainIdHex }],
+        params: [{ chainId: chain.idHex }],
       });
     } catch (e) {
       const err = e as { code?: number };
@@ -97,11 +100,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
           method: "wallet_addEthereumChain",
           params: [
             {
-              chainId: HSK_CHAIN.chainIdHex,
-              chainName: HSK_CHAIN.name,
-              rpcUrls: [HSK_CHAIN.rpcUrl],
-              nativeCurrency: HSK_CHAIN.nativeCurrency,
-              blockExplorerUrls: [HSK_CHAIN.explorer],
+              chainId: chain.idHex,
+              chainName: chain.name,
+              rpcUrls: [chain.rpcUrl],
+              nativeCurrency: chain.nativeCurrency,
+              blockExplorerUrls: [chain.explorer],
             },
           ],
         });
@@ -112,7 +115,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const connect = useCallback(async () => {
     setError(null);
     if (!window.ethereum) {
-      setError("No wallet detected. Install MetaMask to continue.");
+      setError("No wallet detected. Install MetaMask or another EVM wallet to continue.");
       return;
     }
     setConnecting(true);
@@ -125,10 +128,11 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         window.localStorage.setItem(STORAGE_KEY, "1");
       }
       const cid = (await window.ethereum.request({ method: "eth_chainId" })) as string;
-      setChainId(parseInt(cid, 16));
-      if (parseInt(cid, 16) !== HSK_CHAIN.chainId) {
+      const parsed = parseInt(cid, 16);
+      setChainId(parsed);
+      if (parsed !== DEFAULT_CHAIN_ID) {
         try {
-          await switchToHsk();
+          await switchChain(DEFAULT_CHAIN_ID);
         } catch {
           // user rejected — that's fine, they can still view the portfolio
         }
@@ -138,17 +142,32 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     } finally {
       setConnecting(false);
     }
-  }, [switchToHsk]);
+  }, [switchChain]);
 
   const disconnect = useCallback(() => {
     setAddress(null);
     if (typeof window !== "undefined") window.localStorage.removeItem(STORAGE_KEY);
   }, []);
 
-  const value = useMemo(
-    () => ({ address, chainId, connecting, error, connect, disconnect, switchToHsk, hasWallet }),
-    [address, chainId, connecting, error, connect, disconnect, switchToHsk, hasWallet],
-  );
+  const value = useMemo<WalletState>(() => {
+    const known = chainId !== null ? getChain(chainId) : undefined;
+    const isSupportedChain = !!(known && known.status === "live");
+    const activeChain = isSupportedChain
+      ? (known as Chain)
+      : getLiveChain(DEFAULT_CHAIN_ID);
+    return {
+      address,
+      chainId,
+      connecting,
+      error,
+      connect,
+      disconnect,
+      switchChain,
+      activeChain,
+      isSupportedChain,
+      hasWallet,
+    };
+  }, [address, chainId, connecting, error, connect, disconnect, switchChain, hasWallet]);
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
 }
@@ -164,12 +183,16 @@ export function useWallet(): WalletState {
       error: null,
       connect: async () => {},
       disconnect: () => {},
-      switchToHsk: async () => {},
+      switchChain: async () => {},
+      activeChain: getLiveChain(DEFAULT_CHAIN_ID),
+      isSupportedChain: false,
       hasWallet: false,
     };
   }
   return ctx;
 }
+
+export { LIVE_CHAINS };
 
 export function shortAddress(addr: string | null): string {
   if (!addr) return "";

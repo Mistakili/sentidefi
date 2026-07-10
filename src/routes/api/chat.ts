@@ -66,16 +66,22 @@ export const Route = createFileRoute("/api/chat")({
           }),
           getWalletPortfolio: tool({
             description:
-              "Fetch a wallet's live HSK Chain portfolio: native HSK balance, tracked ERC20 balances, per-token USD prices, and total USD value. Call this whenever the user asks about their portfolio, positions, holdings, or wallet.",
+              "Fetch a wallet's live on-chain portfolio for a supported EVM chain: native + tracked ERC20 balances, per-token USD prices, and total USD value. Call this whenever the user asks about their portfolio, positions, holdings, or wallet.",
             inputSchema: z.object({
               address: z.string().describe("0x-prefixed wallet address to look up"),
+              chainId: z
+                .number()
+                .optional()
+                .describe("EVM chain id, e.g. 177 for HSK. Defaults to HSK."),
             }),
-            execute: async ({ address }) => {
+            execute: async ({ address, chainId }) => {
               try {
-                const p = await fetchWalletPortfolio(address);
+                const p = await fetchWalletPortfolio(address, chainId);
                 // Compact holdings shape for the model
                 return {
                   address: p.address,
+                  chainId: p.chainId,
+                  chainName: p.chainName,
                   totalValueUsd: p.totalValueUsd,
                   holdings: p.holdings.map((h) => ({
                     symbol: h.token.symbol,
