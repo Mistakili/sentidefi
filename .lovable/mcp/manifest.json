@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.1",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "sentinelfi-mcp",
+      "version": "0.1.0",
+      "title": "SentinelFi"
+    },
+    "tools": [
+      {
+        "name": "scan_token",
+        "title": "Scan HSK token",
+        "description": "Fetch live on-chain data for a token contract on HSK Chain (chainId 177): whether the address is a contract or EOA, ERC20 metadata (name, symbol, decimals, totalSupply), and bytecode size. Use as the first step for any risk analysis of a token address.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "description": "0x-prefixed 40-char hex token contract address on HSK Chain"
+            }
+          },
+          "required": [
+            "address"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_wallet_portfolio",
+        "title": "Get wallet portfolio",
+        "description": "Read a wallet's live on-chain portfolio on HSK Chain (or another supported EVM chain by chainId): native balance, tracked ERC20 balances, per-token USD prices, and total USD value.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "address": {
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$",
+              "description": "0x-prefixed 40-char hex wallet address"
+            },
+            "chainId": {
+              "description": "EVM chain id (default 177 for HSK Chain).",
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "address"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_recent_risk_scans",
+        "title": "List recent risk scans",
+        "description": "Read the SentinelFi public risk-scan feed: the most recent AI-generated risk verdicts for HSK Chain token contracts, including score (0-100), level (LOW/MEDIUM/HIGH/CRITICAL), a plain-English summary, and — when attested — the on-chain transaction hash.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "limit": {
+              "description": "How many recent scans to return (1-50, default 10).",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            },
+            "address": {
+              "description": "Optional token address filter — return only scans for this contract.",
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            }
+          }
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
