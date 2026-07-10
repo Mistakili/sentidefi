@@ -22,6 +22,9 @@ function Index() {
       <Nav />
       <Hero />
       <TrustBar />
+      <WhyNow />
+      <MetricsStrip />
+      <BuiltFor />
       <Problem />
       <HowItWorks />
       <Features />
@@ -197,14 +200,14 @@ function Hero() {
             HSK On-Chain Horizon · MCP-native · Chain-agnostic
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            The agent-callable{" "}
-            <span className="text-primary">safety layer</span>{" "}
-            for EVM DeFi.
+            Give your AI{" "}
+            <span className="text-primary">eyes</span>{" "}
+            before you give it keys.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-            SentinelFi is risk <span className="text-foreground">infrastructure</span>, not another dashboard.
-            One MCP endpoint. Three read-only tools. Every wallet, protocol, and AI assistant on
-            HSK — and any EVM — plugs in in minutes.
+            SentinelFi is the public risk <span className="text-foreground">infrastructure</span> AI
+            agents call before they touch any EVM protocol. One MCP endpoint. Three read-only tools.
+            HSK-native. Chain-agnostic.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
@@ -229,6 +232,28 @@ function Hero() {
 }
 
 function RiskCard() {
+  const steps = [
+    { label: "Contract verified", tone: "good" as const },
+    { label: "Bytecode analyzed", tone: "good" as const },
+    { label: "Top holder: 64%", tone: "bad" as const },
+    { label: "LP unlocked", tone: "bad" as const },
+    { label: "Mint function found", tone: "bad" as const },
+  ];
+  const [visible, setVisible] = useState(0);
+  const [scoreShown, setScoreShown] = useState(false);
+  useEffect(() => {
+    let i = 0;
+    const id = setInterval(() => {
+      i += 1;
+      if (i > steps.length) {
+        setScoreShown(true);
+        clearInterval(id);
+        return;
+      }
+      setVisible(i);
+    }, 550);
+    return () => clearInterval(id);
+  }, []);
   return (
     <div className="relative mx-auto mt-20 max-w-4xl">
       <div className="absolute inset-0 -z-10 rounded-3xl bg-primary/5" />
@@ -236,8 +261,9 @@ function RiskCard() {
         <div className="rounded-2xl border border-border/60 bg-background/60 p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                Token risk report
+              <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
+                <span className={`size-1.5 rounded-full ${scoreShown ? "bg-destructive" : "bg-primary animate-pulse"}`} />
+                {scoreShown ? "Scan complete" : "Scanning contract…"}
               </div>
               <div className="mt-1 flex items-center gap-2 font-mono text-sm text-foreground/80">
                 0x7f3a…b91e
@@ -251,22 +277,46 @@ function RiskCard() {
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   Risk Score
                 </div>
-                <div className="text-3xl font-bold text-destructive">82</div>
+                <div className={`text-3xl font-bold text-destructive transition-all duration-500 ${scoreShown ? "opacity-100 scale-100" : "opacity-30 scale-90"}`}>
+                  {scoreShown ? "82" : "—"}
+                </div>
               </div>
-              <span className="rounded-full bg-destructive/15 px-3 py-1 text-xs font-semibold text-destructive">
-                HIGH RISK
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold transition-all duration-500 ${scoreShown ? "bg-destructive/15 text-destructive opacity-100" : "bg-muted text-muted-foreground opacity-60"}`}>
+                {scoreShown ? "HIGH RISK" : "PENDING"}
               </span>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-            <Stat label="LP locked" value="No" tone="bad" />
-            <Stat label="Top holder" value="64%" tone="bad" />
-            <Stat label="Verified" value="Yes" tone="good" />
-            <Stat label="Mint fn" value="Found" tone="bad" />
+          <div className="mt-6 space-y-2">
+            {steps.map((s, i) => {
+              const shown = i < visible;
+              return (
+                <div
+                  key={s.label}
+                  className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-all duration-300 ${
+                    shown
+                      ? "border-border bg-card/60 opacity-100 translate-y-0"
+                      : "border-border/40 bg-card/20 opacity-0 translate-y-1"
+                  }`}
+                >
+                  {shown ? (
+                    s.tone === "good" ? (
+                      <Check className="size-4 shrink-0 text-emerald-400" />
+                    ) : (
+                      <AlertTriangle className="size-4 shrink-0 text-destructive" />
+                    )
+                  ) : (
+                    <span className="size-4 shrink-0 rounded-full border border-border/60" />
+                  )}
+                  <span className={shown ? (s.tone === "good" ? "text-foreground/90" : "text-foreground/90") : "text-muted-foreground/40"}>
+                    {s.label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
-          <div className="mt-6 rounded-xl border border-border bg-card/60 p-4">
+          <div className={`mt-6 rounded-xl border border-border bg-card/60 p-4 transition-all duration-500 ${scoreShown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
             <div className="flex items-start gap-3">
               <div className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
                 <Sparkles className="size-4" />
@@ -280,16 +330,6 @@ function RiskCard() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Stat({ label, value, tone }: { label: string; value: string; tone: "good" | "bad" }) {
-  const color = tone === "good" ? "text-emerald-400" : "text-destructive";
-  return (
-    <div className="rounded-lg border border-border bg-card/40 px-3 py-3">
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className={`mt-1 text-sm font-semibold ${color}`}>{value}</div>
     </div>
   );
 }
@@ -315,6 +355,111 @@ function TrustBar() {
 }
 
 function Problem() {
+  return _Problem();
+}
+
+function WhyNow() {
+  const beats = [
+    { n: "01", t: "AI agents execute in milliseconds.", d: "Autonomous wallets, MCP clients, and agent frameworks already sign transactions without asking." },
+    { n: "02", t: "Rug pulls happen in milliseconds too.", d: "A malicious contract drains liquidity in the same block it's queried. There is no time to browse a website." },
+    { n: "03", t: "No public safety layer exists.", d: "Every scanner today is a UI, not a protocol. Nothing else can plug in — least of all an AI agent." },
+    { n: "04", t: "SentinelFi is that layer.", d: "One MCP endpoint. Read-only. Public. Every agent, wallet, and protocol calls the same primitive." },
+  ];
+  return (
+    <section className="border-b border-border/40 bg-gradient-to-b from-background to-card/30">
+      <div className="mx-auto max-w-6xl px-6 py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">Why now</div>
+          <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
+            AI agents are becoming the users of crypto.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
+            They can execute transactions. They can't judge risk. That's the gap.
+          </p>
+        </div>
+        <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+          {beats.map((b) => (
+            <div key={b.n} className="bg-background/60 p-6">
+              <div className="text-3xl font-bold text-primary/40">{b.n}</div>
+              <h3 className="mt-3 text-base font-semibold text-foreground">{b.t}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MetricsStrip() {
+  const [metrics, setMetrics] = useState<{ total: number; unique: number; highRisk: number; onChain: number } | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const { data } = await supabase
+        .from("risk_scans")
+        .select("address,level,tx_hash");
+      if (cancelled || !data) return;
+      const unique = new Set(data.map((r: { address: string }) => r.address.toLowerCase())).size;
+      const highRisk = data.filter((r: { level: string }) => r.level === "HIGH" || r.level === "CRITICAL").length;
+      const onChain = data.filter((r: { tx_hash: string | null }) => !!r.tx_hash).length;
+      setMetrics({ total: data.length, unique, highRisk, onChain });
+    };
+    load();
+  }, []);
+  const items = [
+    { n: metrics?.total ?? 0, l: "Contracts scanned", suffix: "live" },
+    { n: metrics?.unique ?? 0, l: "Unique addresses", suffix: "live" },
+    { n: metrics?.highRisk ?? 0, l: "High-risk detections", suffix: "live" },
+    { n: 1, l: "Chains supported", suffix: "HSK · more soon" },
+  ];
+  return (
+    <section className="border-b border-border/40 bg-background/60">
+      <div className="mx-auto max-w-6xl px-6 py-14">
+        <div className="mb-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          Live network activity · pulled from the public risk_scans feed
+        </div>
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {items.map((it) => (
+            <div key={it.l} className="rounded-xl border border-border bg-card/40 p-5">
+              <div className="text-3xl font-bold text-foreground md:text-4xl">
+                {metrics === null ? <span className="text-muted-foreground/50">—</span> : it.n.toLocaleString()}
+              </div>
+              <div className="mt-1 text-sm text-foreground/90">{it.l}</div>
+              <div className="mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">{it.suffix}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BuiltFor() {
+  const clients = ["Claude", "ChatGPT", "Cursor", "Codex", "MetaMask", "Rabby", "HashKey Wallet"];
+  return (
+    <section className="border-b border-border/40">
+      <div className="mx-auto max-w-6xl px-6 py-14 text-center">
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Built for every MCP-aware client and EIP-1193 wallet
+        </div>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {clients.map((c) => (
+            <span key={c} className="text-lg font-semibold text-foreground/60 transition hover:text-foreground">
+              {c}
+            </span>
+          ))}
+        </div>
+        <p className="mx-auto mt-6 max-w-xl text-xs text-muted-foreground">
+          Any MCP-compatible assistant connects with one URL. Any EIP-1193 wallet reads the same public verdict feed. No SDK, no partnership, no gatekeeper.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function _Problem() {
   return (
     <section className="border-b border-border/40">
       <div className="mx-auto max-w-6xl px-6 py-24">
@@ -577,15 +722,14 @@ function CTA() {
     <section id="cta" className="relative overflow-hidden bg-card/30">
       <div className="mx-auto max-w-4xl px-6 py-28 text-center">
         <h2 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
-          Make every EVM chain the{" "}
-          <span className="text-primary">
-            safest place to trade.
-          </span>
+          Give your AI{" "}
+          <span className="text-primary">eyes</span>{" "}
+          before you give it keys.
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
-          Try the Copilot. Or point your favorite AI assistant at{" "}
+          Every AI agent should know what it's touching before it signs. Point your favorite MCP client at{" "}
           <span className="font-mono text-foreground">sentidefi.lovable.app/mcp</span>{" "}
-          and start asking.
+          — or try the Copilot yourself.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <a href="/copilot" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
