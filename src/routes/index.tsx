@@ -6,10 +6,10 @@ import { WalletButton } from "@/components/WalletButton";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SentinelFi — AI Risk Copilot for HSK Chain DeFi" },
-      { name: "description", content: "On-chain risk scores + an AI copilot that protects every swap on HSK Chain. The safety layer for HSK DeFi." },
-      { property: "og:title", content: "SentinelFi — AI Risk Copilot for HSK Chain" },
-      { property: "og:description", content: "On-chain risk scores + AI copilot that protects every swap on HSK Chain." },
+      { title: "SentinelFi — MCP-Native Risk Infrastructure for EVM DeFi" },
+      { name: "description", content: "Agent-callable safety layer for HSK, BotChain, and every EVM. One MCP endpoint, three read-only tools: any wallet, protocol, or AI can plug in in minutes." },
+      { property: "og:title", content: "SentinelFi — MCP-Native Risk Infrastructure" },
+      { property: "og:description", content: "The agent-callable safety layer for EVM DeFi. HSK-native, chain-agnostic, MCP-first." },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -26,6 +26,7 @@ function Index() {
       <HowItWorks />
       <Features />
       <ForBuilders />
+      <Roadmap />
       <LiveFeed />
       <CTA />
       <Footer />
@@ -167,7 +168,7 @@ function Nav() {
           <Shield className="size-6 text-primary" />
           <span className="text-base font-semibold tracking-tight">SentinelFi</span>
           <span className="ml-2 hidden rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary sm:inline">
-            HSK Chain
+            MCP · EVM
           </span>
         </a>
         <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
@@ -193,17 +194,17 @@ function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
             <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-            HSK On-Chain Horizon Hackathon · DeFi × AI
+            HSK On-Chain Horizon · MCP-native · Chain-agnostic
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            The safety layer for{" "}
-            <span className="text-primary">
-              HSK Chain DeFi
-            </span>
+            The agent-callable{" "}
+            <span className="text-primary">safety layer</span>{" "}
+            for EVM DeFi.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-            On-chain risk scores plus an AI copilot that reads contracts, simulates trades, and
-            intervenes before you sign something you'll regret.
+            SentinelFi is risk <span className="text-foreground">infrastructure</span>, not another dashboard.
+            One MCP endpoint. Three read-only tools. Every wallet, protocol, and AI assistant on
+            HSK — and any EVM — plugs in in minutes.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
@@ -213,10 +214,10 @@ function Hero() {
               Launch Copilot →
             </a>
             <a
-              href="#how"
+              href="#builders"
               className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold text-foreground backdrop-blur transition hover:bg-card"
             >
-              See how it works
+              Connect via MCP
             </a>
           </div>
         </div>
@@ -298,10 +299,10 @@ function TrustBar() {
     <section className="border-b border-border/40 bg-background/60">
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-10 md:grid-cols-4">
         {[
-          ["$2.8B", "lost to DeFi exploits in 2024"],
-          ["73%", "of new tokens fail safety checks"],
-          ["0", "risk primitives native to HSK Chain"],
-          ["<200ms", "Copilot pre-trade verdicts"],
+          ["1 endpoint", "/mcp — public, no login, no key"],
+          ["3 tools", "scan · portfolio · scan history"],
+          ["Any EVM", "HSK live · BotChain-ready · chain-agnostic"],
+          ["Any agent", "Claude · ChatGPT · Cursor · Codex"],
         ].map(([n, l]) => (
           <div key={l} className="text-center">
             <div className="text-2xl font-bold text-primary md:text-3xl">{n}</div>
@@ -323,12 +324,13 @@ function Problem() {
               The problem
             </div>
             <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-              New chain. New tokens. <span className="text-muted-foreground">No safety net.</span>
+              New chains ship faster than <span className="text-muted-foreground">safety tools can follow.</span>
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-              HSK Chain is growing fast — but users are flying blind. Honeypots, unlocked LPs, and
-              concentrated whale supply look identical to legit projects in a wallet UI. The first
-              loss is the last user.
+              GoPlus, De.Fi, Honeypot.is — none cover HSK. And every one of them is a website,
+              not a protocol. Wallets, launchpads, and AI agents can't plug in. Users fly blind,
+              builders reinvent the same scanner, chains stay cold. SentinelFi fixes all three
+              with one shared primitive.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -360,18 +362,18 @@ function HowItWorks() {
   const steps = [
     {
       n: "01",
-      t: "On-chain Risk Registry",
-      d: "A public smart contract on HSK Chain stores tamper-proof risk scores and reason codes for every token, pool, and wallet. Any dApp can call getScore().",
+      t: "Public risk registry",
+      d: "Every Copilot verdict is written to a public dataset with a tx hash. Anyone can query the history; any dApp can gate on it. Trust that's inspectable, not implied.",
     },
     {
       n: "02",
       t: "AI Copilot reasoning",
-      d: "Lovable AI reads the score, simulates your trade, and explains the risk in plain language — with citations to the on-chain evidence.",
+      d: "The Copilot reads on-chain evidence, scores it, and explains the risk in plain language with citations — so users learn why, not just what.",
     },
     {
       n: "03",
-      t: "Safe Swap intervention",
-      d: "Our embeddable widget wraps any swap on HSK. It blocks dangerous trades, suggests safer alternatives, and only signs when you're protected.",
+      t: "MCP delivery layer",
+      d: "The same engine ships as an MCP server. Claude, ChatGPT, Cursor, wallets, and protocols call scan_token, get_wallet_portfolio, and list_recent_risk_scans — no SDK, no scraping.",
     },
   ];
   return (
@@ -406,23 +408,27 @@ function HowItWorks() {
 
 function Features() {
   const items = [
-    { icon: Shield, t: "Contract X-ray", d: "Detects honeypots, hidden mint, blacklist, and pause functions in seconds." },
-    { icon: Activity, t: "Liquidity radar", d: "Tracks LP depth, lock status, and whale concentration in real time." },
-    { icon: Sparkles, t: "AI explanations", d: "Plain-English reasoning with on-chain citations — not a black box." },
-    { icon: Zap, t: "Pre-trade sim", d: "Quotes slippage, price impact, and tax before you sign the transaction." },
-    { icon: Code, t: "Public primitive", d: "Any HSK dApp reads risk scores from our on-chain registry — for free." },
-    { icon: AlertTriangle, t: "Live alerts", d: "Watchlist any token; get pinged the moment its risk profile shifts." },
+    { icon: Code, t: "MCP-native", d: "Public /mcp endpoint. Zero-auth read tools. Any AI assistant connects in seconds — no SDK to maintain." },
+    { icon: Shield, t: "Contract X-ray", d: "Bytecode, supply, ownership, contract-vs-EOA, and mint surface — enough signal to catch the obvious traps today." },
+    { icon: Activity, t: "Chain-agnostic core", d: "A single chains.ts registry. HSK is live; BotChain and any EVM drop in with an RPC and a token list." },
+    { icon: Sparkles, t: "Explainable verdicts", d: "Plain-English reasoning with citations to the on-chain evidence. No black-box score — auditable by users and integrators." },
+    { icon: AlertTriangle, t: "Public dataset", d: "Every scan is written to a public feed with score, level, and tx hash. Wallets, dashboards, and researchers can consume it directly." },
+    { icon: Zap, t: "Copilot UX", d: "The same tools, wrapped in a conversational agent that routes wallet lookups, token scans, and history queries automatically." },
   ];
   return (
     <section id="features" className="border-b border-border/40">
       <div className="mx-auto max-w-6xl px-6 py-24">
         <div className="mx-auto max-w-2xl text-center">
           <div className="text-xs font-semibold uppercase tracking-wider text-primary">
-            What you get
+            Why SentinelFi is different
           </div>
           <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-            Infrastructure, not another dashboard.
+            Infrastructure. Not another dashboard.
           </h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
+            Scanners are destinations users visit. Infrastructure is a dependency other products
+            build on. SentinelFi is built to be the second.
+          </p>
         </div>
         <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-3">
           {items.map(({ icon: Icon, t, d }) => (
@@ -445,21 +451,22 @@ function ForBuilders() {
         <div className="grid gap-10 md:grid-cols-2 md:items-center">
           <div>
             <div className="text-xs font-semibold uppercase tracking-wider text-primary">
-              For HSK builders
+              For wallets, protocols & agents
             </div>
             <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-              Drop in safety. Ship in an hour.
+              One MCP URL. Ship safety in an afternoon.
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-              Wrap any swap, route, or onboarding flow with a single React component or a single
-              Solidity call. SentinelFi handles the rest.
+              Wallets warn users before they sign. Launchpads gate listings on a risk floor.
+              DEXs flag risky pairs at the pool level. AI assistants answer "is this token
+              safe?" natively. All from the same public endpoint — no SDK, no keys, no scraping.
             </p>
             <ul className="mt-6 space-y-3 text-sm">
               {[
-                "<SafeSwap /> widget — works with any HSK DEX",
-                "getScore(address) — public on-chain registry",
-                "REST + WebSocket feeds for off-chain bots",
-                "No fees on reads. Ever.",
+                "scan_token — risk verdict for any EVM contract",
+                "get_wallet_portfolio — balances + USD, all tracked assets",
+                "list_recent_risk_scans — the public verdict feed",
+                "Zero auth. Zero rate-limit friction. Free reads, forever.",
               ].map((x) => (
                 <li key={x} className="flex items-start gap-2">
                   <Check className="mt-0.5 size-4 shrink-0 text-primary" />
@@ -473,32 +480,91 @@ function ForBuilders() {
               <span className="size-2.5 rounded-full bg-destructive/70" />
               <span className="size-2.5 rounded-full bg-primary/70" />
               <span className="size-2.5 rounded-full bg-emerald-500/70" />
-              <span className="ml-2 text-xs text-muted-foreground">SafeSwap.tsx</span>
+              <span className="ml-2 text-xs text-muted-foreground">connect.mcp</span>
             </div>
             <pre className="overflow-x-auto p-5 text-[13px] leading-relaxed">
               <code className="font-mono">
-                <span className="text-pink-400">import</span>{" "}
-                <span className="text-foreground">{"{ SafeSwap }"}</span>{" "}
-                <span className="text-pink-400">from</span>{" "}
-                <span className="text-emerald-300">"@sentinelfi/react"</span>;
+                <span className="text-muted-foreground"># Claude / ChatGPT / Cursor / any MCP client</span>
+                {"\n"}
+                <span className="text-muted-foreground"># Add server URL:</span>
+                {"\n"}
+                <span className="text-emerald-300">https://sentidefi.lovable.app/mcp</span>
                 {"\n\n"}
-                <span className="text-pink-400">export default function</span>{" "}
-                <span className="text-cyan-300">SwapPage</span>() {"{"}
-                {"\n  "}
-                <span className="text-pink-400">return</span> (
-                {"\n    "}
-                <span className="text-foreground">{"<SafeSwap"}</span>
-                {"\n      "}
-                <span className="text-primary">chain</span>=
-                <span className="text-emerald-300">"hsk"</span>
-                {"\n      "}
-                <span className="text-primary">onBlock</span>={"{"}(r) ={">"} alert(r.reason){"}"}
-                {"\n    "}
-                <span className="text-foreground">{"/>"}</span>
-                {"\n  "});
-                {"\n}"}
+                <span className="text-muted-foreground"># Then just ask:</span>
+                {"\n"}
+                <span className="text-cyan-300">{"> scan token 0x7f3a…b91e on HSK"}</span>
+                {"\n"}
+                <span className="text-foreground">{"→ score: 82  HIGH RISK"}</span>
+                {"\n"}
+                <span className="text-foreground">{"  reason: unlocked LP, 64% top holder"}</span>
+                {"\n\n"}
+                <span className="text-cyan-300">{"> what's in wallet 0xb9C5…Ded66?"}</span>
+                {"\n"}
+                <span className="text-foreground">{"→ HSK: 12.4  USDT: 830  total $1,204"}</span>
               </code>
             </pre>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Roadmap() {
+  const shipped = [
+    "Public MCP server with 3 read-only tools",
+    "HSK-native on-chain reads (name, supply, bytecode, contract vs EOA)",
+    "Chain-agnostic registry (chains.ts) — new EVMs drop in fast",
+    "Copilot with intent routing (token vs wallet vs history)",
+    "Public risk-scan dataset with tx-hash provenance",
+  ];
+  const next = [
+    { t: "Deeper scoring", d: "Liquidity locks, ownership renouncement, mint / blacklist / pause detection, tax + honeypot simulation." },
+    { t: "Behavioral signals", d: "Whale-movement patterns, deployer history, rug-pattern matching across the public dataset." },
+    { t: "Open methodology", d: "Scoring rules published as versioned, auditable rulesets — so integrating protocols can trust and challenge the verdict." },
+    { t: "Multi-chain rollout", d: "BotChain, Base, BSC, and any HSK-adjacent EVM the ecosystem asks for — same MCP surface, wider coverage." },
+  ];
+  return (
+    <section id="roadmap" className="border-b border-border/40">
+      <div className="mx-auto max-w-6xl px-6 py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">
+            Honest roadmap
+          </div>
+          <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
+            What ships today. What ships next.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-muted-foreground">
+            We'd rather name the gaps than paper over them. Here's exactly where SentinelFi is,
+            and where the next milestones land.
+          </p>
+        </div>
+        <div className="mt-14 grid gap-6 md:grid-cols-2">
+          <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/5 p-6">
+            <div className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+              Shipped
+            </div>
+            <ul className="mt-4 space-y-3 text-sm">
+              {shipped.map((s) => (
+                <li key={s} className="flex items-start gap-2">
+                  <Check className="mt-0.5 size-4 shrink-0 text-emerald-400" />
+                  <span className="text-foreground/90">{s}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6">
+            <div className="text-xs font-semibold uppercase tracking-wider text-primary">
+              Next
+            </div>
+            <ul className="mt-4 space-y-4 text-sm">
+              {next.map((n) => (
+                <li key={n.t}>
+                  <div className="font-semibold text-foreground">{n.t}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">{n.d}</div>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
@@ -511,13 +577,15 @@ function CTA() {
     <section id="cta" className="relative overflow-hidden bg-card/30">
       <div className="mx-auto max-w-4xl px-6 py-28 text-center">
         <h2 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
-          Make HSK Chain the{" "}
+          Make every EVM chain the{" "}
           <span className="text-primary">
             safest place to trade.
           </span>
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
-          Try the Copilot on any HSK token. Free during the hackathon, free forever for readers.
+          Try the Copilot. Or point your favorite AI assistant at{" "}
+          <span className="font-mono text-foreground">sentidefi.lovable.app/mcp</span>{" "}
+          and start asking.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <a href="/copilot" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
