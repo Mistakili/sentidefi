@@ -23,13 +23,15 @@ export const Route = createFileRoute("/docs")({
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
+  { id: "mcp", label: "MCP Server" },
   { id: "copilot", label: "The Copilot" },
   { id: "risk", label: "Risk Scans" },
   { id: "portfolio", label: "Portfolio Insight" },
   { id: "strategy", label: "Strategy Engine" },
-  { id: "onchain", label: "On-Chain Registry" },
+  { id: "onchain", label: "Public Registry" },
   { id: "architecture", label: "Architecture" },
   { id: "chains", label: "Supported Chains" },
+  { id: "positioning", label: "Why We're Different" },
   { id: "roadmap", label: "Roadmap" },
   { id: "faq", label: "FAQ" },
 ];
