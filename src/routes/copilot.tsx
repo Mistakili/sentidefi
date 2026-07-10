@@ -123,7 +123,7 @@ function CopilotPage() {
             {SAMPLE_TOKENS.map((t) => (
               <button
                 key={t.address}
-                onClick={() => submit(t.address)}
+                onClick={() => submit(`Scan token ${t.address}`)}
                 disabled={isLoading}
                 className="rounded-full border border-border bg-background px-3 py-1 text-[11px] text-muted-foreground hover:border-primary/40 hover:text-foreground disabled:opacity-40"
               >
