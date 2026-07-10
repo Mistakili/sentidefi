@@ -523,9 +523,9 @@ function CTA() {
           <a href="/copilot" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
             Launch Copilot →
           </a>
-          <button className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold backdrop-blur transition hover:bg-card">
+          <a href="/docs" className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold backdrop-blur transition hover:bg-card">
             Read the docs
-          </button>
+          </a>
         </div>
       </div>
     </section>
@@ -542,7 +542,7 @@ function Footer() {
           <span>· Built for HSK On-Chain Horizon Hackathon 2026</span>
         </div>
         <div className="flex gap-5">
-          <a href="#how" className="hover:text-foreground">Docs</a>
+          <a href="/docs" className="hover:text-foreground">Docs</a>
           <a href="#features" className="hover:text-foreground">GitHub</a>
           <a href="#cta" className="hover:text-foreground">Twitter</a>
         </div>
