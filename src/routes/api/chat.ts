@@ -2,17 +2,30 @@ import { createFileRoute } from "@tanstack/react-router";
 import { convertToModelMessages, stepCountIs, streamText, tool, type UIMessage } from "ai";
 import { z } from "zod";
 
-const SYSTEM_PROMPT = `You are SentinelFi Copilot — an on-chain risk analyst for HSK Chain (HashKey Chain, chainId 177).
+const SYSTEM_PROMPT = `You are the SentinelFi Copilot — the AI Financial Guardian for HSK Chain (chainId 177). You help users understand and manage their DeFi positions.
 
-When a user pastes a token address, you MUST:
-1. Call the getTokenOnChainData tool with that address to fetch live on-chain data.
-2. Reason about the data — is it a real contract? Does it expose standard ERC20 metadata? Is total supply unusual? Is the bytecode unusually small (possible proxy/honeypot)? Is it an EOA (not a contract)?
-3. Produce a risk verdict with: a numeric score 0-100 (0 = safe, 100 = critical scam), a level (LOW | MEDIUM | HIGH | CRITICAL), 2–4 short reason codes (e.g. "UNVERIFIED_METADATA", "TINY_BYTECODE", "EOA_NOT_CONTRACT", "NORMAL_ERC20"), and a 1-paragraph plain-English explanation.
-4. Call publishOnChain to attest the verdict on the HSK testnet RiskRegistry contract. If on-chain publishing returns configRequired, that is fine — continue to step 5 anyway.
-5. Call saveRiskVerdict to persist the verdict (with the on-chain txHash if available) to the public scan feed.
-6. End with a clear recommendation (Safe to interact / Proceed with caution / Avoid). If you got an on-chain txHash, mention it and link to the explorer.
+You have three superpowers:
 
-Always be concise. Use markdown. Show the data you found before the verdict. If the address is invalid, explain that without calling tools.`;
+A) RISK ANALYSIS — when the user pastes a token address:
+  1. Call getTokenOnChainData(address).
+  2. Reason: real contract? standard ERC20? unusual supply? tiny bytecode (proxy/honeypot)? EOA?
+  3. Produce a verdict — score 0-100, level (LOW/MEDIUM/HIGH/CRITICAL), 2-4 reason codes, plain-English summary.
+  4. Call publishOnChain to attest on HSK RiskRegistry (configRequired:true is OK — keep going).
+  5. Call saveRiskVerdict to persist to the public feed.
+  6. End with a clear recommendation.
+
+B) PORTFOLIO INSIGHT — when the user asks about "my portfolio", "my wallet", "my holdings", or gives you a wallet address:
+  1. Call getWalletPortfolio(address).
+  2. Break down: what they hold, USD values, concentration (any position > 60% of value is a concentration risk), stablecoin ratio.
+  3. Point out risks and opportunities in plain English.
+  4. If it makes sense, offer to call suggestStrategy for a concrete rebalancing plan.
+
+C) STRATEGY SUGGESTION — when the user asks "what should I do", "any suggestions", "rebalance", or you already ran getWalletPortfolio:
+  1. Call suggestStrategy with an allocation you believe in.
+  2. Each action is one of: HOLD, BUY, SELL, SWAP, STAKE. Include tokenSymbol, target %, and a short reason.
+  3. Keep it simple — 2 to 4 actions max. Never suggest more than one strategy per response.
+
+Always be concise. Use markdown. Show the data you fetched before your verdict. Never make up token balances or prices — always call tools first. If you don't have enough data, ask.`;
 
 export const Route = createFileRoute("/api/chat")({
   server: {
@@ -31,6 +44,7 @@ export const Route = createFileRoute("/api/chat")({
         const { createLovableAiGatewayProvider } = await import("@/lib/ai-gateway.server");
         const { getTokenOnChainData } = await import("@/lib/hsk-rpc.server");
         const { publishVerdictOnChain } = await import("@/lib/registry.server");
+        const { fetchWalletPortfolio } = await import("@/lib/portfolio.server");
 
         const gateway = createLovableAiGatewayProvider(key);
         const model = gateway("google/gemini-3-flash-preview");
@@ -49,6 +63,61 @@ export const Route = createFileRoute("/api/chat")({
                 return { error: e instanceof Error ? e.message : String(e) };
               }
             },
+          }),
+          getWalletPortfolio: tool({
+            description:
+              "Fetch a wallet's live HSK Chain portfolio: native HSK balance, tracked ERC20 balances, per-token USD prices, and total USD value. Call this whenever the user asks about their portfolio, positions, holdings, or wallet.",
+            inputSchema: z.object({
+              address: z.string().describe("0x-prefixed wallet address to look up"),
+            }),
+            execute: async ({ address }) => {
+              try {
+                const p = await fetchWalletPortfolio(address);
+                // Compact holdings shape for the model
+                return {
+                  address: p.address,
+                  totalValueUsd: p.totalValueUsd,
+                  holdings: p.holdings.map((h) => ({
+                    symbol: h.token.symbol,
+                    name: h.token.name,
+                    balance: h.balance,
+                    priceUsd: h.priceUsd,
+                    valueUsd: h.valueUsd,
+                    isNative: h.token.address === "native",
+                  })),
+                };
+              } catch (e) {
+                return { error: e instanceof Error ? e.message : String(e) };
+              }
+            },
+          }),
+          suggestStrategy: tool({
+            description:
+              "Propose a concrete portfolio strategy for the user based on the portfolio you already fetched. Rendered in the UI as an actionable card with a per-action Execute button. Call at most once per response.",
+            inputSchema: z.object({
+              title: z.string().describe("Short strategy title, e.g. 'Reduce HSK concentration'"),
+              rationale: z
+                .string()
+                .max(600)
+                .describe("Plain-English reasoning users will read before executing."),
+              riskLevel: z.enum(["CONSERVATIVE", "BALANCED", "AGGRESSIVE"]),
+              actions: z
+                .array(
+                  z.object({
+                    kind: z.enum(["HOLD", "BUY", "SELL", "SWAP", "STAKE"]),
+                    tokenSymbol: z.string(),
+                    targetAllocationPct: z
+                      .number()
+                      .min(0)
+                      .max(100)
+                      .describe("Target % of the portfolio for this token after the strategy."),
+                    reason: z.string().max(200),
+                  }),
+                )
+                .min(1)
+                .max(4),
+            }),
+            execute: async (input) => ({ suggested: true, ...input }),
           }),
           saveRiskVerdict: tool({
             description:

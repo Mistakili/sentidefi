@@ -4,6 +4,8 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useWallet, shortAddress } from "@/lib/wallet";
+import { WalletButton } from "@/components/WalletButton";
 
 export const Route = createFileRoute("/copilot")({
   head: () => ({
@@ -30,6 +32,7 @@ function CopilotPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
+  const { address } = useWallet();
 
   const { messages, sendMessage, status, error } = useChat({
     id: "sentinel-copilot",
@@ -42,7 +45,7 @@ function CopilotPage() {
           {
             type: "text",
             text:
-              "**SentinelFi Copilot — live on HSK Chain mainnet (177).**\n\nPaste any token address and I'll fetch on-chain data, reason about it, and publish a verdict to the public scan registry. Try one of the sample tokens below.",
+              "**SentinelFi Copilot — your AI Financial Guardian on HSK Chain.**\n\nConnect your wallet and I'll read your portfolio, spot risks, and suggest a strategy. Or paste any token address for a live risk scan.",
           },
         ],
       } as UIMessage,
@@ -75,14 +78,8 @@ function CopilotPage() {
           </Link>
           <span className="text-muted-foreground">/</span>
           <span className="text-sm font-medium">Copilot</span>
-          <span className="ml-2 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-            Live
-          </span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs text-muted-foreground">HSK Mainnet · chainId 177</span>
-        </div>
+        <WalletButton />
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
@@ -105,6 +102,24 @@ function CopilotPage() {
       <div className="border-t border-border/50 bg-card/50 px-4 py-4 md:px-8">
         <div className="mx-auto max-w-3xl">
           <div className="mb-2 flex flex-wrap gap-2">
+            {address && (
+              <>
+                <button
+                  onClick={() => submit(`Analyze my portfolio at ${address}`)}
+                  disabled={isLoading}
+                  className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary hover:brightness-110 disabled:opacity-40"
+                >
+                  Analyze my portfolio ({shortAddress(address)})
+                </button>
+                <button
+                  onClick={() => submit(`Suggest a strategy for my wallet ${address}`)}
+                  disabled={isLoading}
+                  className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary hover:brightness-110 disabled:opacity-40"
+                >
+                  Suggest a strategy
+                </button>
+              </>
+            )}
             {SAMPLE_TOKENS.map((t) => (
               <button
                 key={t.address}
@@ -127,7 +142,7 @@ function CopilotPage() {
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste HSK token address (0x…) or ask a question"
+              placeholder={address ? "Ask about your portfolio, or paste a token 0x…" : "Paste HSK token address (0x…) or ask a question"}
               autoFocus
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
@@ -140,7 +155,7 @@ function CopilotPage() {
             </button>
           </form>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">
-            Live mode: real eth_call to HSK mainnet RPC · verdicts published to public registry
+            Live on HSK mainnet · verdicts published on-chain · your keys stay in your wallet
           </p>
         </div>
       </div>
@@ -211,6 +226,14 @@ function ToolView({ part }: { part: ToolPart }) {
       | { ok: true; txHash: string; explorerUrl: string; attestor: string; registry: string }
       | { ok: false; error: string; configRequired?: boolean };
     return <OnChainCard result={out} />;
+  }
+
+  if (toolName === "getWalletPortfolio" && part.state === "output-available") {
+    return <PortfolioCard output={part.output as PortfolioToolOutput} />;
+  }
+
+  if (toolName === "suggestStrategy" && part.state === "output-available") {
+    return <StrategyCard strategy={part.input as StrategyInput} />;
   }
 
   return (
@@ -351,6 +374,143 @@ function ThinkingBubble() {
     </div>
   );
 }
+
+type PortfolioToolOutput =
+  | {
+      address: string;
+      totalValueUsd: number | null;
+      holdings: Array<{
+        symbol: string;
+        name: string;
+        balance: number;
+        priceUsd: number | null;
+        valueUsd: number | null;
+        isNative: boolean;
+      }>;
+    }
+  | { error: string };
+
+function PortfolioCard({ output }: { output: PortfolioToolOutput }) {
+  if ("error" in output) {
+    return (
+      <div className="my-3 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+        Portfolio fetch failed: {output.error}
+      </div>
+    );
+  }
+  return (
+    <div className="my-3 rounded-xl border border-border bg-background/60 p-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
+            Portfolio snapshot
+          </div>
+          <div className="font-mono text-[11px] text-muted-foreground">
+            {output.address.slice(0, 10)}…{output.address.slice(-6)}
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Total</div>
+          <div className="text-2xl font-bold">
+            {output.totalValueUsd !== null
+              ? `$${output.totalValueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+              : "—"}
+          </div>
+        </div>
+      </div>
+      <div className="mt-3 space-y-1.5">
+        {output.holdings.map((h) => (
+          <div key={h.symbol} className="flex items-center justify-between text-xs">
+            <span className="font-semibold">
+              {h.symbol}
+              {h.isNative && <span className="ml-1 text-[9px] text-muted-foreground">native</span>}
+            </span>
+            <span className="font-mono text-muted-foreground">
+              {h.balance.toLocaleString(undefined, { maximumFractionDigits: 4 })}{" "}
+              {h.valueUsd !== null && (
+                <span className="text-foreground">
+                  · ${h.valueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                </span>
+              )}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+type StrategyInput = {
+  title: string;
+  rationale: string;
+  riskLevel: "CONSERVATIVE" | "BALANCED" | "AGGRESSIVE";
+  actions: Array<{
+    kind: "HOLD" | "BUY" | "SELL" | "SWAP" | "STAKE";
+    tokenSymbol: string;
+    targetAllocationPct: number;
+    reason: string;
+  }>;
+};
+
+function StrategyCard({ strategy }: { strategy: StrategyInput }) {
+  const tone =
+    strategy.riskLevel === "CONSERVATIVE"
+      ? "text-emerald-400 bg-emerald-400/10 border-emerald-400/30"
+      : strategy.riskLevel === "AGGRESSIVE"
+      ? "text-destructive bg-destructive/10 border-destructive/30"
+      : "text-amber-400 bg-amber-400/10 border-amber-400/30";
+  return (
+    <div className="my-3 rounded-xl border border-primary/40 bg-primary/5 p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-[10px] uppercase tracking-wider text-primary">
+            AI Strategy Suggestion
+          </div>
+          <div className="mt-1 text-sm font-semibold">{strategy.title}</div>
+        </div>
+        <span className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold ${tone}`}>
+          {strategy.riskLevel}
+        </span>
+      </div>
+      <p className="mt-2 text-xs text-muted-foreground">{strategy.rationale}</p>
+      <div className="mt-3 space-y-2">
+        {strategy.actions.map((a, i) => (
+          <div
+            key={i}
+            className="flex items-center justify-between gap-3 rounded-lg border border-border bg-background/60 px-3 py-2 text-xs"
+          >
+            <div className="flex items-center gap-2">
+              <span
+                className={`rounded px-1.5 py-0.5 text-[9px] font-bold ${
+                  a.kind === "BUY" || a.kind === "SWAP" || a.kind === "STAKE"
+                    ? "bg-emerald-400/15 text-emerald-400"
+                    : a.kind === "SELL"
+                    ? "bg-destructive/15 text-destructive"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {a.kind}
+              </span>
+              <span className="font-semibold">{a.tokenSymbol}</span>
+              <span className="text-muted-foreground">→ {a.targetAllocationPct}%</span>
+            </div>
+            <button
+              className="rounded-md border border-primary/40 bg-primary/10 px-2 py-1 text-[10px] font-semibold text-primary opacity-60 cursor-not-allowed"
+              disabled
+              title="Execution comes next — wallet-signed swaps ship in the next release."
+            >
+              Execute
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="mt-3 text-[10px] text-muted-foreground">
+        One-click execution ships next release. This preview shows the exact plan the Copilot would run.
+      </div>
+    </div>
+  );
+}
+
 
 /* icons */
 type IconProps = { className?: string };

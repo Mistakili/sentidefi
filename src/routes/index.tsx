@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { WalletButton } from "@/components/WalletButton";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -172,14 +173,10 @@ function Nav() {
         <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
           <a href="#how" className="hover:text-foreground transition">How it works</a>
           <a href="#features" className="hover:text-foreground transition">Features</a>
-          <a href="#builders" className="hover:text-foreground transition">For builders</a>
+          <a href="/portfolio" className="hover:text-foreground transition">Portfolio</a>
+          <a href="/copilot" className="hover:text-foreground transition">Copilot</a>
         </nav>
-        <a
-          href="/copilot"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:brightness-110"
-        >
-          Try the Copilot
-        </a>
+        <WalletButton />
       </div>
     </header>
   );
