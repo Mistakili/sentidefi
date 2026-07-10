@@ -3,17 +3,17 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 export const Route = createFileRoute("/docs")({
   head: () => ({
     meta: [
-      { title: "SentinelFi Docs — MCP-Native Risk Infrastructure for EVM DeFi" },
+      { title: "SentinelFi Docs — Trust Infrastructure for Autonomous Finance" },
       {
         name: "description",
         content:
-          "How SentinelFi works: MCP server, risk scans, portfolio insight, and public dataset. Agent-callable safety infrastructure for HSK and every EVM.",
+          "How SentinelFi works: MCP server, risk registry, portfolio insight, and public dataset. The trust layer wallets, protocols, and agents call before touching an EVM chain.",
       },
-      { property: "og:title", content: "SentinelFi Docs — MCP-Native Risk Infrastructure" },
+      { property: "og:title", content: "SentinelFi Docs — Trust Infrastructure for Autonomous Finance" },
       {
         property: "og:description",
         content:
-          "The agent-callable safety layer for EVM DeFi. HSK-native, chain-agnostic, MCP-first — explained.",
+          "The shared trust layer for humans, wallets, and autonomous agents. HSK-native, chain-agnostic, MCP-first — explained.",
       },
       { property: "og:type", content: "article" },
     ],
@@ -74,10 +74,10 @@ function DocsPage() {
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
             v0.1 · Whitepaper
           </div>
-          <h1>SentinelFi — MCP-Native Risk Infrastructure for EVM DeFi</h1>
+          <h1>SentinelFi — Trust Infrastructure for Autonomous Finance</h1>
           <p className="text-lg text-muted-foreground">
-            The agent-callable safety layer for HSK, BotChain, and every EVM. One public MCP
-            endpoint. Three read-only tools. Any wallet, protocol, or AI assistant plugs in
+            The shared trust layer every wallet, protocol, and agent calls before touching an
+            EVM chain. One public MCP endpoint. Three read-only tools. Any caller plugs in
             in minutes — no SDK, no keys, no scraping.
           </p>
 

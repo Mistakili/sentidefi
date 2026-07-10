@@ -6,10 +6,10 @@ import { WalletButton } from "@/components/WalletButton";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "SentinelFi — Public Risk Infrastructure for EVM DeFi" },
-      { name: "description", content: "Public safety layer for HSK, BotChain, and every EVM. Use it in the Copilot, via the MCP endpoint, or query the public verdict feed — any wallet, protocol, or AI can plug in in minutes." },
-      { property: "og:title", content: "SentinelFi — Public Risk Infrastructure for EVM DeFi" },
-      { property: "og:description", content: "The public safety layer for EVM DeFi. Built for humans and AI agents. HSK-native, chain-agnostic, MCP-first." },
+      { title: "SentinelFi — Trust Infrastructure for Autonomous Finance" },
+      { name: "description", content: "The public trust layer every wallet, protocol, and AI agent calls before touching an EVM chain. MCP-native, chain-agnostic, launched on HSK." },
+      { property: "og:title", content: "SentinelFi — Trust Infrastructure for Autonomous Finance" },
+      { property: "og:description", content: "The shared, public risk-intelligence layer for humans, wallets, and autonomous agents. MCP-native, chain-agnostic, launched on HSK." },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -171,13 +171,13 @@ function Nav() {
           <Shield className="size-6 text-primary" />
           <span className="text-base font-semibold tracking-tight">SentinelFi</span>
           <span className="ml-2 hidden rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-primary sm:inline">
-            MCP · EVM
+            Trust Infra · MCP
           </span>
         </a>
         <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
+          <a href="/docs" className="hover:text-foreground transition">Docs</a>
+          <a href="#builders" className="hover:text-foreground transition">MCP</a>
           <a href="#how" className="hover:text-foreground transition">How it works</a>
-          <a href="#features" className="hover:text-foreground transition">Features</a>
-          <a href="/portfolio" className="hover:text-foreground transition">Portfolio</a>
           <a href="/copilot" className="hover:text-foreground transition">Copilot</a>
         </nav>
         <WalletButton />
@@ -197,30 +197,36 @@ function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
             <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-            HSK On-Chain Horizon · MCP-native · Chain-agnostic
+            Trust Infrastructure for Autonomous Finance
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            Give every user{" "}
-            <span className="text-primary">eyes</span>{" "}
-            before they give up keys.
+            The trust layer every wallet, protocol, and agent{" "}
+            <span className="text-primary">calls</span>{" "}
+            before touching an EVM chain.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-            SentinelFi is the public risk <span className="text-foreground">infrastructure</span> humans
-            and AI agents call before they touch any EVM protocol. Copilot, MCP endpoint, or public feed.
-            HSK-native. Chain-agnostic.
+            Every autonomous action needs a risk check. SentinelFi is the shared, public{" "}
+            <span className="text-foreground">risk-intelligence infrastructure</span> that
+            makes on-chain execution safe — for humans, wallets, and agents. HSK-native. Chain-agnostic.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
-              href="/copilot"
+              href="/docs"
               className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110"
             >
-              Launch Copilot →
+              Read the docs →
             </a>
             <a
               href="#builders"
               className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold text-foreground backdrop-blur transition hover:bg-card"
             >
               Connect via MCP
+            </a>
+            <a
+              href="/copilot"
+              className="rounded-md border border-border/60 bg-transparent px-6 py-3 text-sm font-medium text-muted-foreground transition hover:text-foreground"
+            >
+              See reference Copilot
             </a>
           </div>
         </div>
@@ -340,9 +346,9 @@ function TrustBar() {
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-10 md:grid-cols-4">
         {[
           ["1 endpoint", "/mcp — public, no login, no key"],
-          ["3 tools", "scan · portfolio · scan history"],
+          ["3 primitives", "MCP tools · risk registry · public feed"],
           ["Any EVM", "HSK live · BotChain-ready · chain-agnostic"],
-          ["Any user or agent", "Claude · ChatGPT · MetaMask · Copilot"],
+          ["Any caller", "Wallets · protocols · copilots · agents"],
         ].map(([n, l]) => (
           <div key={l} className="text-center">
             <div className="text-2xl font-bold text-primary md:text-3xl">{n}</div>
@@ -371,10 +377,11 @@ function WhyNow() {
         <div className="mx-auto max-w-2xl text-center">
           <div className="text-xs font-semibold uppercase tracking-wider text-primary">Why now</div>
           <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-            AI agents are joining humans as users of crypto.
+            Autonomous finance is arriving faster than its safety layer.
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
-            Both can execute transactions. Neither should have to judge risk alone. That's the gap.
+            Humans, wallets, and agents can all execute on-chain. None of them should have to
+            judge risk alone. SentinelFi is the shared primitive that closes the gap.
           </p>
         </div>
         <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
@@ -437,22 +444,34 @@ function MetricsStrip() {
 }
 
 function BuiltFor() {
-  const clients = ["Claude", "ChatGPT", "Cursor", "Codex", "MetaMask", "Rabby", "HashKey Wallet"];
+  const groups = [
+    { t: "Wallets", d: "MetaMask, Rabby, HashKey Wallet — pre-tx risk warnings via one MCP call." },
+    { t: "Protocols", d: "DEXs, launchpads, lending — gate listings, flag pools, score collateral." },
+    { t: "Chains", d: "HSK live. BotChain, Base, BSC drop in with a single registry entry." },
+    { t: "Agents", d: "Claude, ChatGPT, Cursor, Codex — native 'is this safe?' answers." },
+  ];
   return (
     <section className="border-b border-border/40">
-      <div className="mx-auto max-w-6xl px-6 py-14 text-center">
-        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Built for humans, wallets, and AI agents
+      <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Who plugs into SentinelFi
+          </div>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
+            One trust layer. Every kind of caller.
+          </h2>
         </div>
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
-          {clients.map((c) => (
-            <span key={c} className="text-lg font-semibold text-foreground/60 transition hover:text-foreground">
-              {c}
-            </span>
+        <div className="mt-12 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
+          {groups.map((g) => (
+            <div key={g.t} className="bg-background/60 p-6">
+              <div className="text-sm font-semibold text-primary">{g.t}</div>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{g.d}</p>
+            </div>
           ))}
         </div>
-        <p className="mx-auto mt-6 max-w-xl text-xs text-muted-foreground">
-          Use the Copilot in your browser, connect an MCP assistant, or read the public verdict feed directly. Same data, same trust model, whichever surface you prefer.
+        <p className="mx-auto mt-8 max-w-xl text-center text-xs text-muted-foreground">
+          The Copilot is a reference client — a demo of how anything on this list can consume
+          the same MCP primitives.
         </p>
       </div>
     </section>
@@ -512,8 +531,8 @@ function HowItWorks() {
     },
     {
       n: "02",
-      t: "AI Copilot reasoning",
-      d: "The Copilot reads on-chain evidence, scores it, and explains the risk in plain language with citations — so users learn why, not just what.",
+      t: "Reference Copilot",
+      d: "A working client that shows how any caller — wallet, protocol, or agent — reads the on-chain evidence, scores it, and explains the verdict with citations. The Copilot is a demo of the infra, not the product.",
     },
     {
       n: "03",
