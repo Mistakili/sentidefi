@@ -1,16 +1,18 @@
 import { useWallet, shortAddress, LIVE_CHAINS } from "@/lib/wallet";
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function WalletButton() {
   const { address, chainId, connecting, connect, disconnect, switchChain, hasWallet, error, activeChain, isSupportedChain } =
     useWallet();
   const [open, setOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   if (!address) {
     // No wallet extension detected: send them to install MetaMask instead of
     // a click that would fail silently.
-    if (!hasWallet && typeof window !== "undefined") {
+    if (mounted && !hasWallet) {
       return (
         <a
           href="https://metamask.io/download/"
