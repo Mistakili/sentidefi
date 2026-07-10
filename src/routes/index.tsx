@@ -232,6 +232,28 @@ function Hero() {
 }
 
 function RiskCard() {
+  const steps = [
+    { label: "Contract verified", tone: "good" as const },
+    { label: "Bytecode analyzed", tone: "good" as const },
+    { label: "Top holder: 64%", tone: "bad" as const },
+    { label: "LP unlocked", tone: "bad" as const },
+    { label: "Mint function found", tone: "bad" as const },
+  ];
+  const [visible, setVisible] = useState(0);
+  const [scoreShown, setScoreShown] = useState(false);
+  useEffect(() => {
+    let i = 0;
+    const id = setInterval(() => {
+      i += 1;
+      if (i > steps.length) {
+        setScoreShown(true);
+        clearInterval(id);
+        return;
+      }
+      setVisible(i);
+    }, 550);
+    return () => clearInterval(id);
+  }, []);
   return (
     <div className="relative mx-auto mt-20 max-w-4xl">
       <div className="absolute inset-0 -z-10 rounded-3xl bg-primary/5" />
@@ -239,8 +261,9 @@ function RiskCard() {
         <div className="rounded-2xl border border-border/60 bg-background/60 p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                Token risk report
+              <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
+                <span className={`size-1.5 rounded-full ${scoreShown ? "bg-destructive" : "bg-primary animate-pulse"}`} />
+                {scoreShown ? "Scan complete" : "Scanning contract…"}
               </div>
               <div className="mt-1 flex items-center gap-2 font-mono text-sm text-foreground/80">
                 0x7f3a…b91e
@@ -254,22 +277,46 @@ function RiskCard() {
                 <div className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   Risk Score
                 </div>
-                <div className="text-3xl font-bold text-destructive">82</div>
+                <div className={`text-3xl font-bold text-destructive transition-all duration-500 ${scoreShown ? "opacity-100 scale-100" : "opacity-30 scale-90"}`}>
+                  {scoreShown ? "82" : "—"}
+                </div>
               </div>
-              <span className="rounded-full bg-destructive/15 px-3 py-1 text-xs font-semibold text-destructive">
-                HIGH RISK
+              <span className={`rounded-full px-3 py-1 text-xs font-semibold transition-all duration-500 ${scoreShown ? "bg-destructive/15 text-destructive opacity-100" : "bg-muted text-muted-foreground opacity-60"}`}>
+                {scoreShown ? "HIGH RISK" : "PENDING"}
               </span>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-            <Stat label="LP locked" value="No" tone="bad" />
-            <Stat label="Top holder" value="64%" tone="bad" />
-            <Stat label="Verified" value="Yes" tone="good" />
-            <Stat label="Mint fn" value="Found" tone="bad" />
+          <div className="mt-6 space-y-2">
+            {steps.map((s, i) => {
+              const shown = i < visible;
+              return (
+                <div
+                  key={s.label}
+                  className={`flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition-all duration-300 ${
+                    shown
+                      ? "border-border bg-card/60 opacity-100 translate-y-0"
+                      : "border-border/40 bg-card/20 opacity-0 translate-y-1"
+                  }`}
+                >
+                  {shown ? (
+                    s.tone === "good" ? (
+                      <Check className="size-4 shrink-0 text-emerald-400" />
+                    ) : (
+                      <AlertTriangle className="size-4 shrink-0 text-destructive" />
+                    )
+                  ) : (
+                    <span className="size-4 shrink-0 rounded-full border border-border/60" />
+                  )}
+                  <span className={shown ? (s.tone === "good" ? "text-foreground/90" : "text-foreground/90") : "text-muted-foreground/40"}>
+                    {s.label}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
-          <div className="mt-6 rounded-xl border border-border bg-card/60 p-4">
+          <div className={`mt-6 rounded-xl border border-border bg-card/60 p-4 transition-all duration-500 ${scoreShown ? "opacity-100 translate-y-0" : "opacity-0 translate-y-2"}`}>
             <div className="flex items-start gap-3">
               <div className="mt-0.5 grid size-7 shrink-0 place-items-center rounded-full bg-primary/15 text-primary">
                 <Sparkles className="size-4" />
