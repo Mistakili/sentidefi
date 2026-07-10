@@ -97,6 +97,34 @@ function DocsPage() {
             </p>
           </section>
 
+          <section id="mcp">
+            <h2>2. MCP Server</h2>
+            <p>
+              SentinelFi exposes a public <a href="/mcp"><code>/mcp</code></a> endpoint that
+              speaks the Model Context Protocol. No auth. No API keys. Add the URL to Claude,
+              ChatGPT, Cursor, Codex, or any MCP-aware client and three tools appear:
+            </p>
+            <ul>
+              <li>
+                <code>scan_token</code> — live on-chain read for any EVM contract: metadata,
+                supply, contract-vs-EOA, bytecode size. Returns a compact structured verdict.
+              </li>
+              <li>
+                <code>get_wallet_portfolio</code> — native + tracked ERC20 balances with USD
+                values and total for any address on any supported chain.
+              </li>
+              <li>
+                <code>list_recent_risk_scans</code> — the public verdict feed. Optional
+                address filter. Score, level, summary, and tx hash.
+              </li>
+            </ul>
+            <p>
+              Every tool is <code>readOnlyHint: true</code> and touches only already-public
+              data — safe to expose without login. Wallets can warn users pre-sign; launchpads
+              can gate listings; AI assistants can answer "is this token safe?" natively.
+            </p>
+          </section>
+
           <section id="copilot">
             <h2>3. The Copilot</h2>
             <p>
