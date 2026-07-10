@@ -100,9 +100,10 @@ function DocsPage() {
           <section id="copilot">
             <h2>3. The Copilot</h2>
             <p>
-              The Copilot is a streaming LLM agent with three tool categories. The model
-              is stateless per request — the client sends the full conversation and the
-              server binds it to a fresh set of tools each turn.
+              The Copilot is our reference client for the same tools that ship over MCP.
+              It's a streaming LLM agent that routes intent automatically — token scans,
+              wallet lookups, strategy suggestions — so users get the shortest path to an
+              answer.
             </p>
             <h3>What you can ask</h3>
             <ul>
