@@ -74,32 +74,31 @@ function DocsPage() {
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
             v0.1 · Whitepaper
           </div>
-          <h1>SentinelFi — The Safety Layer for HSK Chain DeFi</h1>
+          <h1>SentinelFi — MCP-Native Risk Infrastructure for EVM DeFi</h1>
           <p className="text-lg text-muted-foreground">
-            Your AI Financial Guardian. Talk to your portfolio, spot risks before you sign,
-            and let a single conversational agent do the work of a dozen dashboards.
+            The agent-callable safety layer for HSK, BotChain, and every EVM. One public MCP
+            endpoint. Three read-only tools. Any wallet, protocol, or AI assistant plugs in
+            in minutes — no SDK, no keys, no scraping.
           </p>
 
           <section id="overview">
             <h2>1. Overview</h2>
             <p>
-              DeFi on any new chain is fragmented. Users bounce between wallets, bridges,
-              DEXs, lending markets, staking dashboards, block explorers, and Telegram
-              groups just to answer one question: <em>is this safe, and what should I do?</em>
+              Every new chain has the same cold-start problem: wallets won't integrate without
+              safety data; safety data doesn't exist without scanners; scanners don't build for
+              small chains. Meanwhile the existing scanners (GoPlus, De.Fi, Honeypot.is) are
+              websites, not protocols — nothing else can plug in.
             </p>
             <p>
-              SentinelFi collapses that surface into one interface — a conversational AI
-              Copilot that reads live on-chain data, produces risk verdicts, analyzes
-              wallets, and proposes strategies. Every verdict is published to a public
-              on-chain <strong>Risk Registry</strong> so other HSK dApps can consume it.
-            </p>
-            <p>
-              We are not another dashboard. We are the safety layer other dApps embed.
+              SentinelFi is built the opposite way: <strong>infrastructure first, UI second</strong>.
+              The same engine that powers our Copilot ships as a public MCP server, so any
+              wallet, launchpad, DEX, or AI assistant can call it directly. HSK is the launch
+              chain; the architecture is chain-agnostic from day one.
             </p>
           </section>
 
           <section id="copilot">
-            <h2>2. The Copilot</h2>
+            <h2>3. The Copilot</h2>
             <p>
               The Copilot is a streaming LLM agent with three tool categories. The model
               is stateless per request — the client sends the full conversation and the
