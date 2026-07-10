@@ -334,16 +334,6 @@ function RiskCard() {
   );
 }
 
-function Stat({ label, value, tone }: { label: string; value: string; tone: "good" | "bad" }) {
-  const color = tone === "good" ? "text-emerald-400" : "text-destructive";
-  return (
-    <div className="rounded-lg border border-border bg-card/40 px-3 py-3">
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-      <div className={`mt-1 text-sm font-semibold ${color}`}>{value}</div>
-    </div>
-  );
-}
-
 function TrustBar() {
   return (
     <section className="border-b border-border/40 bg-background/60">
