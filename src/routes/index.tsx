@@ -355,6 +355,111 @@ function TrustBar() {
 }
 
 function Problem() {
+  return _Problem();
+}
+
+function WhyNow() {
+  const beats = [
+    { n: "01", t: "AI agents execute in milliseconds.", d: "Autonomous wallets, MCP clients, and agent frameworks already sign transactions without asking." },
+    { n: "02", t: "Rug pulls happen in milliseconds too.", d: "A malicious contract drains liquidity in the same block it's queried. There is no time to browse a website." },
+    { n: "03", t: "No public safety layer exists.", d: "Every scanner today is a UI, not a protocol. Nothing else can plug in — least of all an AI agent." },
+    { n: "04", t: "SentinelFi is that layer.", d: "One MCP endpoint. Read-only. Public. Every agent, wallet, and protocol calls the same primitive." },
+  ];
+  return (
+    <section className="border-b border-border/40 bg-gradient-to-b from-background to-card/30">
+      <div className="mx-auto max-w-6xl px-6 py-24">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">Why now</div>
+          <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
+            AI agents are becoming the users of crypto.
+          </h2>
+          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
+            They can execute transactions. They can't judge risk. That's the gap.
+          </p>
+        </div>
+        <div className="mt-14 grid gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
+          {beats.map((b) => (
+            <div key={b.n} className="bg-background/60 p-6">
+              <div className="text-3xl font-bold text-primary/40">{b.n}</div>
+              <h3 className="mt-3 text-base font-semibold text-foreground">{b.t}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MetricsStrip() {
+  const [metrics, setMetrics] = useState<{ total: number; unique: number; highRisk: number; onChain: number } | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const { data } = await supabase
+        .from("risk_scans")
+        .select("address,level,tx_hash");
+      if (cancelled || !data) return;
+      const unique = new Set(data.map((r: { address: string }) => r.address.toLowerCase())).size;
+      const highRisk = data.filter((r: { level: string }) => r.level === "HIGH" || r.level === "CRITICAL").length;
+      const onChain = data.filter((r: { tx_hash: string | null }) => !!r.tx_hash).length;
+      setMetrics({ total: data.length, unique, highRisk, onChain });
+    };
+    load();
+  }, []);
+  const items = [
+    { n: metrics?.total ?? 0, l: "Contracts scanned", suffix: "live" },
+    { n: metrics?.unique ?? 0, l: "Unique addresses", suffix: "live" },
+    { n: metrics?.highRisk ?? 0, l: "High-risk detections", suffix: "live" },
+    { n: 1, l: "Chains supported", suffix: "HSK · more soon" },
+  ];
+  return (
+    <section className="border-b border-border/40 bg-background/60">
+      <div className="mx-auto max-w-6xl px-6 py-14">
+        <div className="mb-8 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          Live network activity · pulled from the public risk_scans feed
+        </div>
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+          {items.map((it) => (
+            <div key={it.l} className="rounded-xl border border-border bg-card/40 p-5">
+              <div className="text-3xl font-bold text-foreground md:text-4xl">
+                {metrics === null ? <span className="text-muted-foreground/50">—</span> : it.n.toLocaleString()}
+              </div>
+              <div className="mt-1 text-sm text-foreground/90">{it.l}</div>
+              <div className="mt-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">{it.suffix}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BuiltFor() {
+  const clients = ["Claude", "ChatGPT", "Cursor", "Codex", "MetaMask", "Rabby", "HashKey Wallet"];
+  return (
+    <section className="border-b border-border/40">
+      <div className="mx-auto max-w-6xl px-6 py-14 text-center">
+        <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Built for every MCP-aware client and EIP-1193 wallet
+        </div>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-x-8 gap-y-3">
+          {clients.map((c) => (
+            <span key={c} className="text-lg font-semibold text-foreground/60 transition hover:text-foreground">
+              {c}
+            </span>
+          ))}
+        </div>
+        <p className="mx-auto mt-6 max-w-xl text-xs text-muted-foreground">
+          Any MCP-compatible assistant connects with one URL. Any EIP-1193 wallet reads the same public verdict feed. No SDK, no partnership, no gatekeeper.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function _Problem() {
   return (
     <section className="border-b border-border/40">
       <div className="mx-auto max-w-6xl px-6 py-24">
