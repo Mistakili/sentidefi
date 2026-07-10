@@ -22,6 +22,9 @@ function Index() {
       <Nav />
       <Hero />
       <TrustBar />
+      <WhyNow />
+      <MetricsStrip />
+      <BuiltFor />
       <Problem />
       <HowItWorks />
       <Features />
@@ -197,14 +200,14 @@ function Hero() {
             HSK On-Chain Horizon · MCP-native · Chain-agnostic
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            The agent-callable{" "}
-            <span className="text-primary">safety layer</span>{" "}
-            for EVM DeFi.
+            Give your AI{" "}
+            <span className="text-primary">eyes</span>{" "}
+            before you give it keys.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-            SentinelFi is risk <span className="text-foreground">infrastructure</span>, not another dashboard.
-            One MCP endpoint. Three read-only tools. Every wallet, protocol, and AI assistant on
-            HSK — and any EVM — plugs in in minutes.
+            SentinelFi is the public risk <span className="text-foreground">infrastructure</span> AI
+            agents call before they touch any EVM protocol. One MCP endpoint. Three read-only tools.
+            HSK-native. Chain-agnostic.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
