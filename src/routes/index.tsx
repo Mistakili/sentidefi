@@ -722,15 +722,14 @@ function CTA() {
     <section id="cta" className="relative overflow-hidden bg-card/30">
       <div className="mx-auto max-w-4xl px-6 py-28 text-center">
         <h2 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
-          Make every EVM chain the{" "}
-          <span className="text-primary">
-            safest place to trade.
-          </span>
+          Give your AI{" "}
+          <span className="text-primary">eyes</span>{" "}
+          before you give it keys.
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
-          Try the Copilot. Or point your favorite AI assistant at{" "}
+          Every AI agent should know what it's touching before it signs. Point your favorite MCP client at{" "}
           <span className="font-mono text-foreground">sentidefi.lovable.app/mcp</span>{" "}
-          and start asking.
+          — or try the Copilot yourself.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <a href="/copilot" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
