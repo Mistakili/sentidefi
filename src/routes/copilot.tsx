@@ -4,6 +4,8 @@ import { DefaultChatTransport, type UIMessage } from "ai";
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useWallet, shortAddress } from "@/lib/wallet";
+import { WalletButton } from "@/components/WalletButton";
 
 export const Route = createFileRoute("/copilot")({
   head: () => ({
@@ -30,6 +32,7 @@ function CopilotPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const [input, setInput] = useState("");
+  const { address } = useWallet();
 
   const { messages, sendMessage, status, error } = useChat({
     id: "sentinel-copilot",
@@ -42,7 +45,7 @@ function CopilotPage() {
           {
             type: "text",
             text:
-              "**SentinelFi Copilot — live on HSK Chain mainnet (177).**\n\nPaste any token address and I'll fetch on-chain data, reason about it, and publish a verdict to the public scan registry. Try one of the sample tokens below.",
+              "**SentinelFi Copilot — your AI Financial Guardian on HSK Chain.**\n\nConnect your wallet and I'll read your portfolio, spot risks, and suggest a strategy. Or paste any token address for a live risk scan.",
           },
         ],
       } as UIMessage,
@@ -75,14 +78,8 @@ function CopilotPage() {
           </Link>
           <span className="text-muted-foreground">/</span>
           <span className="text-sm font-medium">Copilot</span>
-          <span className="ml-2 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-primary">
-            Live
-          </span>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-xs text-muted-foreground">HSK Mainnet · chainId 177</span>
-        </div>
+        <WalletButton />
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8">
@@ -105,6 +102,24 @@ function CopilotPage() {
       <div className="border-t border-border/50 bg-card/50 px-4 py-4 md:px-8">
         <div className="mx-auto max-w-3xl">
           <div className="mb-2 flex flex-wrap gap-2">
+            {address && (
+              <>
+                <button
+                  onClick={() => submit(`Analyze my portfolio at ${address}`)}
+                  disabled={isLoading}
+                  className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary hover:brightness-110 disabled:opacity-40"
+                >
+                  Analyze my portfolio ({shortAddress(address)})
+                </button>
+                <button
+                  onClick={() => submit(`Suggest a strategy for my wallet ${address}`)}
+                  disabled={isLoading}
+                  className="rounded-full border border-primary/40 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary hover:brightness-110 disabled:opacity-40"
+                >
+                  Suggest a strategy
+                </button>
+              </>
+            )}
             {SAMPLE_TOKENS.map((t) => (
               <button
                 key={t.address}
@@ -127,7 +142,7 @@ function CopilotPage() {
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste HSK token address (0x…) or ask a question"
+              placeholder={address ? "Ask about your portfolio, or paste a token 0x…" : "Paste HSK token address (0x…) or ask a question"}
               autoFocus
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
@@ -140,7 +155,7 @@ function CopilotPage() {
             </button>
           </form>
           <p className="mt-2 text-center text-[11px] text-muted-foreground">
-            Live mode: real eth_call to HSK mainnet RPC · verdicts published to public registry
+            Live on HSK mainnet · verdicts published on-chain · your keys stay in your wallet
           </p>
         </div>
       </div>
@@ -211,6 +226,14 @@ function ToolView({ part }: { part: ToolPart }) {
       | { ok: true; txHash: string; explorerUrl: string; attestor: string; registry: string }
       | { ok: false; error: string; configRequired?: boolean };
     return <OnChainCard result={out} />;
+  }
+
+  if (toolName === "getWalletPortfolio" && part.state === "output-available") {
+    return <PortfolioCard output={part.output as PortfolioToolOutput} />;
+  }
+
+  if (toolName === "suggestStrategy" && part.state === "output-available") {
+    return <StrategyCard strategy={part.input as StrategyInput} />;
   }
 
   return (
