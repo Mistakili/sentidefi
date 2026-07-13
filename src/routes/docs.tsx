@@ -75,11 +75,11 @@ function DocsPage() {
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
             v0.1 · Whitepaper
           </div>
-          <h1>SentinelFi — Trust Infrastructure for Autonomous Finance</h1>
+          <h1>SentinelFi Trust Protocol</h1>
           <p className="text-lg text-muted-foreground">
-            The shared trust layer every wallet, protocol, and agent calls before touching an
-            EVM chain. One public MCP endpoint. Three read-only tools. Any caller plugs in
-            in minutes — no SDK, no keys, no scraping.
+            The trust checkpoint every AI agent, wallet, and protocol calls before executing
+            on-chain. One public endpoint. One recommendation. One signed Safety Attestation.
+            No SDK, no keys, no scraping.
           </p>
 
           <section id="trust-api">
