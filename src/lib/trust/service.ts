@@ -1,11 +1,18 @@
 import { createClient } from "@supabase/supabase-js";
 import { getAdapter } from "@/lib/chains/registry";
-import { evaluateTrust, type TrustInput } from "./engine";
-import { signReceipt, type TrustReceipt } from "./receipt";
+import {
+  evaluateTrust,
+  type TrustGrade,
+  type TrustInput,
+  type TrustRecommendation,
+} from "./engine";
+import { signReceipt, type SafetyAttestation } from "./receipt";
 
 export type TrustCheckResult = {
   safe: boolean;
   verdict: "ALLOW" | "WARN" | "BLOCK";
+  trustGrade: TrustGrade;
+  recommendation: TrustRecommendation;
   riskScore: number;
   severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   confidence: number;
@@ -16,10 +23,12 @@ export type TrustCheckResult = {
   wallet: string | null;
   agentId: string | null;
   action: string;
-  trustReceipt: TrustReceipt;
+  attestation: SafetyAttestation;
+  /** @deprecated use `attestation` — retained for one release for back-compat. */
+  trustReceipt: SafetyAttestation;
 };
 
-async function persistReceipt(receipt: TrustReceipt, reasoning: string[]) {
+async function persistReceipt(receipt: SafetyAttestation, reasoning: string[]) {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) return; // best-effort — API still returns the signed receipt
@@ -57,6 +66,8 @@ export async function runTrustCheck(input: TrustInput): Promise<TrustCheckResult
     action: input.action,
     riskScore: evalResult.riskScore,
     verdict: evalResult.verdict,
+    trustGrade: evalResult.trustGrade,
+    recommendation: evalResult.recommendation,
     severity: evalResult.severity,
     confidence: evalResult.confidence,
     checks: evalResult.checks,
@@ -69,6 +80,8 @@ export async function runTrustCheck(input: TrustInput): Promise<TrustCheckResult
   return {
     safe: evalResult.safe,
     verdict: evalResult.verdict,
+    trustGrade: evalResult.trustGrade,
+    recommendation: evalResult.recommendation,
     riskScore: evalResult.riskScore,
     severity: evalResult.severity,
     confidence: evalResult.confidence,
@@ -79,6 +92,7 @@ export async function runTrustCheck(input: TrustInput): Promise<TrustCheckResult
     wallet: receipt.wallet,
     agentId: receipt.agentId,
     action: input.action,
+    attestation: receipt,
     trustReceipt: receipt,
   };
 }
