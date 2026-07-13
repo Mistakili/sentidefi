@@ -492,7 +492,7 @@ const { ok, signer, expected } = verifyReceipt(response.attestation, response.re
             <h3>Is this open source?</h3>
             <p>
               The scanning heuristics and registry contract will be published under a
-              permissive license after the hackathon.
+              permissive license.
             </p>
           </section>
 
