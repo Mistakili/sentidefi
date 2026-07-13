@@ -1,40 +1,48 @@
-import { useWallet, shortAddress, LIVE_CHAINS } from "@/lib/wallet";
+import { useWallet, shortAddress, LIVE_CHAINS, MOBILE_WALLETS } from "@/lib/wallet";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 export function WalletButton() {
-  const { address, chainId, connecting, connect, disconnect, switchChain, hasWallet, error, activeChain, isSupportedChain } =
-    useWallet();
+  const {
+    address,
+    chainId,
+    connecting,
+    connect,
+    disconnect,
+    switchChain,
+    wallets,
+    error,
+    activeChain,
+    isSupportedChain,
+    isMobile,
+  } = useWallet();
   const [open, setOpen] = useState(false);
+  const [picker, setPicker] = useState(false);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
   if (!address) {
-    // No wallet extension detected: send them to install MetaMask instead of
-    // a click that would fail silently.
-    if (mounted && !hasWallet) {
-      return (
-        <a
-          href="https://metamask.io/download/"
-          target="_blank"
-          rel="noreferrer"
-          className="rounded-md border border-primary/40 bg-primary/10 px-4 py-2 text-sm font-semibold text-primary transition hover:brightness-110"
-          title="No wallet detected in this browser"
-        >
-          Install wallet ↗
-        </a>
-      );
-    }
     return (
-      <div className="flex flex-col items-end gap-1">
+      <div className="relative flex flex-col items-end gap-1">
         <button
-          onClick={connect}
+          onClick={() => setPicker(true)}
           disabled={connecting}
           className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:brightness-110 disabled:opacity-60"
         >
           {connecting ? "Connecting…" : "Connect wallet"}
         </button>
         {error && <span className="text-[10px] text-destructive">{error}</span>}
+        {mounted && picker && (
+          <WalletPicker
+            wallets={wallets}
+            isMobile={isMobile}
+            onPick={async (rdns) => {
+              setPicker(false);
+              await connect(rdns);
+            }}
+            onClose={() => setPicker(false)}
+          />
+        )}
       </div>
     );
   }
@@ -99,5 +107,115 @@ export function WalletButton() {
         </div>
       )}
     </div>
+  );
+}
+
+function WalletPicker({
+  wallets,
+  isMobile,
+  onPick,
+  onClose,
+}: {
+  wallets: ReturnType<typeof useWallet>["wallets"];
+  isMobile: boolean;
+  onPick: (rdns: string) => void;
+  onClose: () => void;
+}) {
+  const currentUrl =
+    typeof window !== "undefined" ? window.location.href : "https://sentidefi.lovable.app";
+
+  // On mobile with no injected provider, we're in a plain browser (Safari/Chrome).
+  // Show deep-links that reopen this page inside the wallet's in-app browser.
+  const showMobileLinks = isMobile && wallets.length === 0;
+
+  return (
+    <>
+      <div
+        className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <div className="fixed left-1/2 top-1/2 z-50 w-[min(92vw,380px)] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-border bg-card p-5 shadow-2xl">
+        <div className="mb-1 flex items-center justify-between">
+          <h3 className="text-base font-semibold">Connect a wallet</h3>
+          <button
+            onClick={onClose}
+            className="rounded-md p-1 text-muted-foreground hover:bg-background hover:text-foreground"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+        <p className="mb-4 text-xs text-muted-foreground">
+          {showMobileLinks
+            ? "Open SentinelFi inside your wallet app to continue."
+            : "Choose which wallet to connect."}
+        </p>
+
+        {!showMobileLinks && wallets.length > 0 && (
+          <div className="flex flex-col gap-1.5">
+            {wallets.map((w) => (
+              <button
+                key={w.uuid}
+                onClick={() => onPick(w.rdns)}
+                className="flex items-center gap-3 rounded-lg border border-border bg-background px-3 py-2.5 text-left transition hover:border-primary/40 hover:bg-primary/5"
+              >
+                {w.icon ? (
+                  <img src={w.icon} alt="" className="size-8 rounded-md" />
+                ) : (
+                  <div className="grid size-8 place-items-center rounded-md bg-muted text-xs font-semibold">
+                    {w.name.slice(0, 1)}
+                  </div>
+                )}
+                <div className="flex-1">
+                  <div className="text-sm font-medium">{w.name}</div>
+                  <div className="text-[10px] text-muted-foreground">{w.rdns}</div>
+                </div>
+                <span className="text-xs text-muted-foreground">Connect →</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {showMobileLinks && (
+          <div className="flex flex-col gap-1.5">
+            {MOBILE_WALLETS.map((w) => (
+              <a
+                key={w.rdns}
+                href={w.deeplink(currentUrl)}
+                className="flex items-center gap-3 rounded-lg border border-border bg-background px-3 py-2.5 text-left transition hover:border-primary/40 hover:bg-primary/5"
+              >
+                <div className="grid size-8 place-items-center rounded-md bg-muted text-xs font-semibold">
+                  {w.name.slice(0, 1)}
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-medium">Open in {w.name}</div>
+                  <div className="text-[10px] text-muted-foreground">Uses in-app browser</div>
+                </div>
+                <span className="text-xs text-muted-foreground">Open ↗</span>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {!showMobileLinks && wallets.length === 0 && (
+          <div className="rounded-lg border border-dashed border-border p-4 text-center text-xs text-muted-foreground">
+            No wallet extension detected in this browser.
+            <div className="mt-3 flex flex-wrap justify-center gap-2">
+              {MOBILE_WALLETS.map((w) => (
+                <a
+                  key={w.rdns}
+                  href={w.install}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-md border border-border bg-background px-3 py-1.5 text-xs hover:border-primary/40"
+                >
+                  Install {w.name} ↗
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }
