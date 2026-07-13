@@ -31,12 +31,19 @@ export default defineTool({
       .max(128)
       .optional()
       .describe("Stable identifier of the calling agent (for future reputation)."),
+    anchor: z
+      .boolean()
+      .optional()
+      .describe(
+        "If true, also anchor the Safety Attestation on-chain (BotChain RiskRegistry). Requires BotChain configuration.",
+      ),
   },
   annotations: { readOnlyHint: true, idempotentHint: false, openWorldHint: true },
   handler: async (input) => {
     const { runTrustCheck } = await import("@/lib/trust/service");
     try {
-      const result = await runTrustCheck(input);
+      const { anchor, ...trustInput } = input;
+      const result = await runTrustCheck(trustInput, { anchor });
       return {
         content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
         structuredContent: result as unknown as Record<string, unknown>,

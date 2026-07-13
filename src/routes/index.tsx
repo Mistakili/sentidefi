@@ -176,8 +176,9 @@ function Nav() {
         </a>
         <nav className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
           <a href="/docs" className="hover:text-foreground transition">Docs</a>
+          <a href="/verified" className="hover:text-foreground transition">Verified</a>
+          <a href="/demo" className="hover:text-foreground transition">Demo</a>
           <a href="#builders" className="hover:text-foreground transition">MCP</a>
-          <a href="#how" className="hover:text-foreground transition">How it works</a>
           <a href="/copilot" className="hover:text-foreground transition">Copilot</a>
         </nav>
         <WalletButton />

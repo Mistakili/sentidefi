@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { keccak256, toUtf8Bytes } from "ethers";
 import { getAdapter } from "@/lib/chains/registry";
 import {
   evaluateTrust,
@@ -7,6 +8,7 @@ import {
   type TrustRecommendation,
 } from "./engine";
 import { signReceipt, type SafetyAttestation } from "./receipt";
+import { anchorAttestation, type AnchorResult } from "./anchor";
 
 export type TrustCheckResult = {
   safe: boolean;
@@ -26,6 +28,7 @@ export type TrustCheckResult = {
   attestation: SafetyAttestation;
   /** @deprecated use `attestation` — retained for one release for back-compat. */
   trustReceipt: SafetyAttestation;
+  anchor: AnchorResult;
 };
 
 async function persistReceipt(receipt: SafetyAttestation, reasoning: string[]) {
@@ -54,7 +57,12 @@ async function persistReceipt(receipt: SafetyAttestation, reasoning: string[]) {
   });
 }
 
-export async function runTrustCheck(input: TrustInput): Promise<TrustCheckResult> {
+export type RunTrustCheckOptions = { anchor?: boolean };
+
+export async function runTrustCheck(
+  input: TrustInput,
+  opts: RunTrustCheckOptions = {},
+): Promise<TrustCheckResult> {
   const adapter = getAdapter(input.chainId);
   const evalResult = await evaluateTrust(input, adapter);
 
@@ -77,6 +85,21 @@ export async function runTrustCheck(input: TrustInput): Promise<TrustCheckResult
   // Persist async; do not block response on failure.
   persistReceipt(receipt, evalResult.reasoning).catch(() => {});
 
+  const anchor: AnchorResult = opts.anchor
+    ? await anchorAttestation({
+        receiptId: receipt.receiptId,
+        payloadHash: keccak256(
+          toUtf8Bytes(
+            [
+              receipt.receiptId,
+              receipt.reasoningHash,
+              receipt.signature,
+            ].join("|"),
+          ),
+        ),
+      })
+    : { status: "skipped", reason: "not_requested" };
+
   return {
     safe: evalResult.safe,
     verdict: evalResult.verdict,
@@ -94,5 +117,6 @@ export async function runTrustCheck(input: TrustInput): Promise<TrustCheckResult
     action: input.action,
     attestation: receipt,
     trustReceipt: receipt,
+    anchor,
   };
 }

@@ -9,17 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DocsRouteImport } from './routes/docs'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as ApiV1VerifiedBadgeDotsvgRouteImport } from './routes/api/v1/verified.badge[.]svg'
 import { Route as ApiV1TrustCheckRouteImport } from './routes/api/v1/trust.check'
 
+const VerifiedRoute = VerifiedRouteImport.update({
+  id: '/verified',
+  path: '/verified',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
@@ -33,6 +41,11 @@ const McpRoute = McpRouteImport.update({
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CopilotRoute = CopilotRouteImport.update({
@@ -68,6 +81,12 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1VerifiedBadgeDotsvgRoute =
+  ApiV1VerifiedBadgeDotsvgRouteImport.update({
+    id: '/api/v1/verified/badge.svg',
+    path: '/api/v1/verified/badge.svg',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiV1TrustCheckRoute = ApiV1TrustCheckRouteImport.update({
   id: '/api/v1/trust/check',
   path: '/api/v1/trust/check',
@@ -77,94 +96,122 @@ const ApiV1TrustCheckRoute = ApiV1TrustCheckRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/demo': typeof DemoRoute
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
+  '/verified': typeof VerifiedRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/api/chat': typeof ApiChatRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/v1/trust/check': typeof ApiV1TrustCheckRoute
+  '/api/v1/verified/badge.svg': typeof ApiV1VerifiedBadgeDotsvgRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/demo': typeof DemoRoute
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
+  '/verified': typeof VerifiedRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/api/chat': typeof ApiChatRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/v1/trust/check': typeof ApiV1TrustCheckRoute
+  '/api/v1/verified/badge.svg': typeof ApiV1VerifiedBadgeDotsvgRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/demo': typeof DemoRoute
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
+  '/verified': typeof VerifiedRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/api/chat': typeof ApiChatRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/v1/trust/check': typeof ApiV1TrustCheckRoute
+  '/api/v1/verified/badge.svg': typeof ApiV1VerifiedBadgeDotsvgRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/copilot'
+    | '/demo'
     | '/docs'
     | '/mcp'
     | '/portfolio'
+    | '/verified'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/api/chat'
     | '/.mcp/invoke-tool/$tool'
     | '/api/v1/trust/check'
+    | '/api/v1/verified/badge.svg'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/copilot'
+    | '/demo'
     | '/docs'
     | '/mcp'
     | '/portfolio'
+    | '/verified'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/api/chat'
     | '/.mcp/invoke-tool/$tool'
     | '/api/v1/trust/check'
+    | '/api/v1/verified/badge.svg'
   id:
     | '__root__'
     | '/'
     | '/copilot'
+    | '/demo'
     | '/docs'
     | '/mcp'
     | '/portfolio'
+    | '/verified'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/api/chat'
     | '/.mcp/invoke-tool/$tool'
     | '/api/v1/trust/check'
+    | '/api/v1/verified/badge.svg'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CopilotRoute: typeof CopilotRoute
+  DemoRoute: typeof DemoRoute
   DocsRoute: typeof DocsRoute
   McpRoute: typeof McpRoute
   PortfolioRoute: typeof PortfolioRoute
+  VerifiedRoute: typeof VerifiedRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatRoute: typeof ApiChatRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiV1TrustCheckRoute: typeof ApiV1TrustCheckRoute
+  ApiV1VerifiedBadgeDotsvgRoute: typeof ApiV1VerifiedBadgeDotsvgRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verified': {
+      id: '/verified'
+      path: '/verified'
+      fullPath: '/verified'
+      preLoaderRoute: typeof VerifiedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portfolio': {
       id: '/portfolio'
       path: '/portfolio'
@@ -184,6 +231,13 @@ declare module '@tanstack/react-router' {
       path: '/docs'
       fullPath: '/docs'
       preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/copilot': {
@@ -228,6 +282,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/verified/badge.svg': {
+      id: '/api/v1/verified/badge.svg'
+      path: '/api/v1/verified/badge.svg'
+      fullPath: '/api/v1/verified/badge.svg'
+      preLoaderRoute: typeof ApiV1VerifiedBadgeDotsvgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/trust/check': {
       id: '/api/v1/trust/check'
       path: '/api/v1/trust/check'
@@ -241,15 +302,18 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CopilotRoute: CopilotRoute,
+  DemoRoute: DemoRoute,
   DocsRoute: DocsRoute,
   McpRoute: McpRoute,
   PortfolioRoute: PortfolioRoute,
+  VerifiedRoute: VerifiedRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
   ApiChatRoute: ApiChatRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiV1TrustCheckRoute: ApiV1TrustCheckRoute,
+  ApiV1VerifiedBadgeDotsvgRoute: ApiV1VerifiedBadgeDotsvgRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

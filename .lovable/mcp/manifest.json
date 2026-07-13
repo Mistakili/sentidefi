@@ -60,6 +60,10 @@
               "description": "Stable identifier of the calling agent (for future reputation).",
               "type": "string",
               "maxLength": 128
+            },
+            "anchor": {
+              "description": "If true, also anchor the Safety Attestation on-chain (BotChain RiskRegistry). Requires BotChain configuration.",
+              "type": "boolean"
             }
           },
           "required": [
