@@ -1,0 +1,84 @@
+import { createClient } from "@supabase/supabase-js";
+import { getAdapter } from "@/lib/chains/registry";
+import { evaluateTrust, type TrustInput } from "./engine";
+import { signReceipt, type TrustReceipt } from "./receipt";
+
+export type TrustCheckResult = {
+  safe: boolean;
+  verdict: "ALLOW" | "WARN" | "BLOCK";
+  riskScore: number;
+  severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  confidence: number;
+  checks: Record<string, boolean>;
+  reasoning: string[];
+  chainId: number;
+  contract: string | null;
+  wallet: string | null;
+  agentId: string | null;
+  action: string;
+  trustReceipt: TrustReceipt;
+};
+
+async function persistReceipt(receipt: TrustReceipt, reasoning: string[]) {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return; // best-effort — API still returns the signed receipt
+  const supabase = createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+  await supabase.from("trust_receipts").insert({
+    receipt_id: receipt.receiptId,
+    chain_id: receipt.chainId,
+    contract: receipt.contract,
+    wallet: receipt.wallet,
+    agent_id: receipt.agentId,
+    action: receipt.action,
+    risk_score: receipt.riskScore,
+    verdict: receipt.verdict,
+    severity: receipt.severity,
+    confidence: receipt.confidence,
+    checks: receipt.checks,
+    reasoning,
+    reasoning_hash: receipt.reasoningHash,
+    attestor: receipt.attestor,
+    signature: receipt.signature,
+  });
+}
+
+export async function runTrustCheck(input: TrustInput): Promise<TrustCheckResult> {
+  const adapter = getAdapter(input.chainId);
+  const evalResult = await evaluateTrust(input, adapter);
+
+  const receipt = await signReceipt({
+    chainId: input.chainId,
+    contract: (input.contract ?? input.token ?? null)?.toLowerCase() ?? null,
+    wallet: input.wallet?.toLowerCase() ?? null,
+    agentId: input.agentId ?? null,
+    action: input.action,
+    riskScore: evalResult.riskScore,
+    verdict: evalResult.verdict,
+    severity: evalResult.severity,
+    confidence: evalResult.confidence,
+    checks: evalResult.checks,
+    reasoning: evalResult.reasoning,
+  });
+
+  // Persist async; do not block response on failure.
+  persistReceipt(receipt, evalResult.reasoning).catch(() => {});
+
+  return {
+    safe: evalResult.safe,
+    verdict: evalResult.verdict,
+    riskScore: evalResult.riskScore,
+    severity: evalResult.severity,
+    confidence: evalResult.confidence,
+    checks: evalResult.checks as unknown as Record<string, boolean>,
+    reasoning: evalResult.reasoning,
+    chainId: input.chainId,
+    contract: receipt.contract,
+    wallet: receipt.wallet,
+    agentId: receipt.agentId,
+    action: input.action,
+    trustReceipt: receipt,
+  };
+}
