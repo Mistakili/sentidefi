@@ -9,7 +9,6 @@ The agent-callable safety layer for HSK, BotChain, and every EVM chain.
 - 🌐 **Live app:** https://sentidefi.lovable.app
 - 📖 **Whitepaper / docs:** https://sentidefi.lovable.app/docs
 - 🤖 **MCP endpoint:** https://sentidefi.lovable.app/mcp
-- 🏆 Built for the **HSK On-Chain Horizon Hackathon 2026**
 
 ---
 
@@ -175,9 +174,9 @@ Add `https://sentidefi.lovable.app/mcp` as an MCP server in your client. The thr
 
 ## License
 
-To be announced after the hackathon. Scanning heuristics, the MCP server, and
-the `RiskRegistry` contract will be published under a permissive license.
+Scanning heuristics, the MCP server, and the `RiskRegistry` contract will be
+published under a permissive license.
 
 ---
 
-_Built with [Lovable](https://lovable.dev) for the HSK On-Chain Horizon Hackathon 2026._
+_Built with [Lovable](https://lovable.dev)._

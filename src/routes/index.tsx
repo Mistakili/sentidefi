@@ -821,7 +821,7 @@ function Footer() {
         <div className="flex items-center gap-2">
           <Shield className="size-4 text-primary" />
           <span className="font-semibold text-foreground">SentinelFi</span>
-          <span>· Built for HSK On-Chain Horizon Hackathon 2026</span>
+          <span>· Trust protocol for autonomous transactions</span>
         </div>
         <div className="flex gap-5">
           <a href="/docs" className="hover:text-foreground">Docs</a>
