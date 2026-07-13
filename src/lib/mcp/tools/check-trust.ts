@@ -3,9 +3,9 @@ import { z } from "zod";
 
 export default defineTool({
   name: "check_trust",
-  title: "Check trust (Trust API)",
+  title: "Check trust (SentinelFi Trust Protocol)",
   description:
-    "The single question every AI agent, wallet, or protocol should ask before executing an on-chain action on a supported EVM chain: is this action safe? Returns a structured verdict (ALLOW / WARN / BLOCK) with risk score, severity, on-chain checks, plain-English reasoning, and a cryptographically signed Trust Receipt that can be verified off-chain by anyone with the attestor's public address. HSK Chain live today; BotChain and additional EVMs plug into the same interface.",
+    "The trust checkpoint every AI agent, wallet, or protocol should call before executing an on-chain action. Returns a clear recommendation (Proceed / Proceed with Caution / Manual Review Required / Block), a Trust Grade (A–F), a risk score, plain-English reasoning, and a cryptographically signed Safety Attestation any third party can verify off-chain with only the attestor's public address. HSK Chain live today; BotChain and additional EVMs plug into the same interface.",
   inputSchema: {
     chainId: z.number().int().describe("EVM chain id (177 = HSK Chain)."),
     action: z
