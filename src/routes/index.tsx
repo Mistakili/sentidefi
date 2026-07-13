@@ -344,7 +344,7 @@ function TrustBar() {
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-10 md:grid-cols-4">
         {[
           ["1 endpoint", "/mcp — public, no login, no key"],
-          ["3 primitives", "MCP tools · risk registry · public feed"],
+          ["Trust API", "POST /api/v1/trust/check — one call, signed receipt"],
           ["Any EVM", "HSK live · BotChain-ready · chain-agnostic"],
           ["Any caller", "Wallets · protocols · copilots · agents"],
         ].map(([n, l]) => (
@@ -524,18 +524,18 @@ function HowItWorks() {
   const steps = [
     {
       n: "01",
-      t: "Public risk registry",
-      d: "Every Copilot verdict is written to a public dataset with a tx hash. Anyone can query the history; any dApp can gate on it. Trust that's inspectable, not implied.",
+      t: "Trust API",
+      d: "One call before any on-chain action: POST /api/v1/trust/check. Returns ALLOW / WARN / BLOCK, a risk score, plain-English reasoning, and a signed Trust Receipt anyone can verify off-chain.",
     },
     {
       n: "02",
-      t: "Reference Copilot",
-      d: "A working client that shows how any caller — wallet, protocol, or agent — reads the on-chain evidence, scores it, and explains the verdict with citations. The Copilot is a demo of the infra, not the product.",
+      t: "MCP delivery",
+      d: "The same Trust API is exposed as an MCP tool (check_trust). Claude, ChatGPT, Cursor, wallets, and agent frameworks call it natively — no SDK, no scraping, no keys.",
     },
     {
       n: "03",
-      t: "MCP delivery layer",
-      d: "The same engine ships as an MCP server. Claude, ChatGPT, Cursor, wallets, and protocols call scan_token, get_wallet_portfolio, and list_recent_risk_scans — no SDK, no scraping.",
+      t: "Public receipts",
+      d: "Every verdict is a cryptographically signed Trust Receipt, stored in a public registry. Independent proof that due diligence was done before an agent signed.",
     },
   ];
   return (
