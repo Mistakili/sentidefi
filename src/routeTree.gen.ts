@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DocsRouteImport } from './routes/docs'
@@ -20,6 +21,11 @@ import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as ApiV1TrustCheckRouteImport } from './routes/api/v1/trust.check'
 
+const VerifiedRoute = VerifiedRouteImport.update({
+  id: '/verified',
+  path: '/verified',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PortfolioRoute = PortfolioRouteImport.update({
   id: '/portfolio',
   path: '/portfolio',
@@ -80,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
+  '/verified': typeof VerifiedRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/api/chat': typeof ApiChatRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByTo {
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
+  '/verified': typeof VerifiedRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/api/chat': typeof ApiChatRoute
@@ -105,6 +113,7 @@ export interface FileRoutesById {
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
+  '/verified': typeof VerifiedRoute
   '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/api/chat': typeof ApiChatRoute
@@ -119,6 +128,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/mcp'
     | '/portfolio'
+    | '/verified'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/api/chat'
@@ -131,6 +141,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/mcp'
     | '/portfolio'
+    | '/verified'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/api/chat'
@@ -143,6 +154,7 @@ export interface FileRouteTypes {
     | '/docs'
     | '/mcp'
     | '/portfolio'
+    | '/verified'
     | '/.mcp/list-tools'
     | '/.well-known/oauth-protected-resource'
     | '/api/chat'
@@ -156,6 +168,7 @@ export interface RootRouteChildren {
   DocsRoute: typeof DocsRoute
   McpRoute: typeof McpRoute
   PortfolioRoute: typeof PortfolioRoute
+  VerifiedRoute: typeof VerifiedRoute
   Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   ApiChatRoute: typeof ApiChatRoute
@@ -165,6 +178,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/verified': {
+      id: '/verified'
+      path: '/verified'
+      fullPath: '/verified'
+      preLoaderRoute: typeof VerifiedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/portfolio': {
       id: '/portfolio'
       path: '/portfolio'
@@ -244,6 +264,7 @@ const rootRouteChildren: RootRouteChildren = {
   DocsRoute: DocsRoute,
   McpRoute: McpRoute,
   PortfolioRoute: PortfolioRoute,
+  VerifiedRoute: VerifiedRoute,
   Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
     Char91DotwellKnownChar93OauthProtectedResourceRoute,
