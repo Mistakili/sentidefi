@@ -646,23 +646,27 @@ function ForBuilders() {
             </div>
             <pre className="overflow-x-auto p-5 text-[13px] leading-relaxed">
               <code className="font-mono">
-                <span className="text-muted-foreground"># Claude / ChatGPT / Cursor / any MCP client</span>
+                <span className="text-muted-foreground">{"// Trust checkpoint before every autonomous transaction"}</span>
                 {"\n"}
-                <span className="text-muted-foreground"># Add server URL:</span>
+                <span className="text-foreground">{"const verdict = await sentinel.check({"}</span>
                 {"\n"}
-                <span className="text-emerald-300">https://sentidefi.lovable.app/mcp</span>
+                <span className="text-foreground">{"  chainId: 177, action: \"swap\", contract"}</span>
+                {"\n"}
+                <span className="text-foreground">{"});"}</span>
                 {"\n\n"}
-                <span className="text-muted-foreground"># Then just ask:</span>
+                <span className="text-cyan-300">{"if (verdict.recommendation !== \"Proceed\") {"}</span>
                 {"\n"}
-                <span className="text-cyan-300">{"> scan token 0x7f3a…b91e on HSK"}</span>
+                <span className="text-cyan-300">{"  throw new Error(\"Unsafe transaction\");"}</span>
                 {"\n"}
-                <span className="text-foreground">{"→ score: 82  HIGH RISK"}</span>
-                {"\n"}
-                <span className="text-foreground">{"  reason: unlocked LP, 64% top holder"}</span>
+                <span className="text-cyan-300">{"}"}</span>
                 {"\n\n"}
-                <span className="text-cyan-300">{"> what's in wallet 0xb9C5…Ded66?"}</span>
+                <span className="text-emerald-300">{"executeTransaction();"}</span>
+                {"\n\n"}
+                <span className="text-muted-foreground">{"// verdict.trustGrade      → \"A\""}</span>
                 {"\n"}
-                <span className="text-foreground">{"→ HSK: 12.4  USDT: 830  total $1,204"}</span>
+                <span className="text-muted-foreground">{"// verdict.recommendation  → \"Proceed\""}</span>
+                {"\n"}
+                <span className="text-muted-foreground">{"// verdict.attestation     → signed Safety Attestation"}</span>
               </code>
             </pre>
           </div>
