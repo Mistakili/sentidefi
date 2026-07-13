@@ -1,11 +1,11 @@
 import { getChain } from "@/lib/chains";
 import { hskAdapter } from "./adapters/hsk";
-import { botAdapter } from "./adapters/bot";
+import { botchainAdapter } from "./adapters/botchain";
 import type { ChainAdapter } from "./adapters/types";
 
 const ADAPTERS: Record<number, ChainAdapter> = {
   [hskAdapter.chainId]: hskAdapter,
-  [botAdapter.chainId]: botAdapter,
+  [botchainAdapter.chainId]: botchainAdapter,
 };
 
 export function getAdapter(chainId: number): ChainAdapter {
