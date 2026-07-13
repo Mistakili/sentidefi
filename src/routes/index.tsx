@@ -525,7 +525,7 @@ function HowItWorks() {
     {
       n: "01",
       t: "Trust API",
-      d: "One call before any on-chain action: POST /api/v1/trust/check. Returns ALLOW / WARN / BLOCK, a risk score, plain-English reasoning, and a signed Trust Receipt anyone can verify off-chain.",
+      d: "One call before any on-chain action: POST /api/v1/trust/check. Returns a recommendation (Proceed / Proceed with Caution / Manual Review Required / Block), a Trust Grade (A–F), and plain-English reasoning.",
     },
     {
       n: "02",
@@ -534,8 +534,8 @@ function HowItWorks() {
     },
     {
       n: "03",
-      t: "Public receipts",
-      d: "Every verdict is a cryptographically signed Trust Receipt, stored in a public registry. Independent proof that due diligence was done before an agent signed.",
+      t: "Safety Attestations",
+      d: "Every decision returns a cryptographically signed Safety Attestation, stored in a public registry. Independent proof that due diligence occurred before an agent signed.",
     },
   ];
   return (
