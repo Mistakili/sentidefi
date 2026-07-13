@@ -75,18 +75,26 @@ function DocsPage() {
           <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
             v0.1 · Whitepaper
           </div>
-          <h1>SentinelFi — Trust Infrastructure for Autonomous Finance</h1>
+          <h1>SentinelFi Trust Protocol</h1>
           <p className="text-lg text-muted-foreground">
-            The shared trust layer every wallet, protocol, and agent calls before touching an
-            EVM chain. One public MCP endpoint. Three read-only tools. Any caller plugs in
-            in minutes — no SDK, no keys, no scraping.
+            The trust checkpoint every AI agent, wallet, and protocol calls before executing
+            on-chain. One public endpoint. One recommendation. One signed Safety Attestation.
+            No SDK, no keys, no scraping.
           </p>
 
           <section id="trust-api">
-            <h2>0. Trust API — the one endpoint</h2>
+            <h2>0. SentinelFi Trust Protocol</h2>
+            <p className="text-lg">
+              <strong>Three lines of code. One trust decision. Before every autonomous transaction.</strong>
+            </p>
+            <pre><code>{`const verdict = await sentinel.check({ chainId: 177, action: "swap", contract });
+if (verdict.recommendation !== "Proceed") throw new Error("Unsafe transaction");
+executeTransaction();`}</code></pre>
             <p>
-              Before any AI agent, wallet, or protocol executes an on-chain action, ask
-              SentinelFi one question: <em>is this action safe?</em>
+              The Trust Protocol is a single public endpoint every AI agent, wallet, and protocol
+              can call before signing: <em>is this action safe?</em> It returns a clear
+              recommendation, a Trust Grade, and a signed Safety Attestation anyone can verify
+              off-chain. No SDK, no keys, no scraping.
             </p>
             <p><strong>Endpoint.</strong> <code>POST /api/v1/trust/check</code> — public, no auth.</p>
             <h3>Request</h3>
@@ -101,8 +109,10 @@ function DocsPage() {
   }'`}</code></pre>
             <h3>Response</h3>
             <pre><code>{`{
-  "safe": true,
+  "recommendation": "Proceed",
+  "trustGrade": "A",
   "verdict": "ALLOW",
+  "safe": true,
   "riskScore": 18,
   "severity": "LOW",
   "confidence": 85,
@@ -118,29 +128,41 @@ function DocsPage() {
     "ERC20 metadata present: USDT / Tether USD.",
     "Bytecode size 3812 bytes within normal range."
   ],
-  "trustReceipt": {
-    "receiptId": "…",
-    "issuedAt":  "2026-07-13T…Z",
-    "chainId":   177,
-    "contract":  "0x…",
-    "action":    "swap",
-    "riskScore": 18,
-    "verdict":   "ALLOW",
+  "attestation": {
+    "receiptId":     "…",
+    "issuedAt":      "2026-07-13T…Z",
+    "chainId":       177,
+    "contract":      "0x…",
+    "action":        "swap",
+    "riskScore":     18,
+    "trustGrade":    "A",
+    "recommendation":"Proceed",
+    "verdict":       "ALLOW",
     "reasoningHash": "0x…",
-    "attestor":  "0x…",
-    "signature": "0x…"
+    "attestor":      "0x…",
+    "signature":     "0x…"
   }
 }`}</code></pre>
-            <h3>Trust Receipts</h3>
+            <h3>Trust Grade &amp; recommendation</h3>
             <p>
-              Every check returns a cryptographically signed receipt. The signature covers a
-              stable canonical payload plus a <code>keccak256</code> hash of the reasoning array.
-              Anyone with the attestor's public address can verify a receipt off-chain — no
-              chain call, no SentinelFi call required.
+              <strong>Trust Grade</strong> compresses the full evaluation into a single letter
+              (A / B / C / D / F) — memorable, comparable, and safe to render in a wallet chip
+              or launchpad badge. <strong>Recommendation</strong> is the action label agents
+              should branch on: <code>Proceed</code>, <code>Proceed with Caution</code>,
+              <code>Manual Review Required</code>, or <code>Block</code>. Branch on
+              <code>recommendation</code>, log the grade, keep the raw score for analytics.
+            </p>
+            <h3>Safety Attestations</h3>
+            <p>
+              Every check returns a cryptographically signed <em>Safety Attestation</em>. The
+              signature covers a stable canonical payload plus a <code>keccak256</code> hash of
+              the reasoning array. Anyone with the attestor's public address can verify an
+              attestation off-chain — no chain call, no SentinelFi call required. That's the
+              proof due diligence occurred before the agent signed.
             </p>
             <pre><code>{`import { verifyReceipt } from "@/lib/trust/receipt";
 
-const { ok, signer, expected } = verifyReceipt(response.trustReceipt, response.reasoning);
+const { ok, signer, expected } = verifyReceipt(response.attestation, response.reasoning);
 // ok === true when signer === expected AND the reasoning hash matches`}</code></pre>
             <h3>Same call, over MCP</h3>
             <p>

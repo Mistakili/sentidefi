@@ -22,10 +22,18 @@ export type TrustChecks = {
 
 export type TrustSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 export type TrustVerdict = "ALLOW" | "WARN" | "BLOCK";
+export type TrustGrade = "A" | "B" | "C" | "D" | "F";
+export type TrustRecommendation =
+  | "Proceed"
+  | "Proceed with Caution"
+  | "Manual Review Required"
+  | "Block";
 
 export type TrustEvaluation = {
   safe: boolean;
   verdict: TrustVerdict;
+  trustGrade: TrustGrade;
+  recommendation: TrustRecommendation;
   riskScore: number;
   severity: TrustSeverity;
   confidence: number;
@@ -33,6 +41,21 @@ export type TrustEvaluation = {
   reasoning: string[];
   token: TokenOnChainData | null;
 };
+
+export function gradeFor(riskScore: number): TrustGrade {
+  if (riskScore < 15) return "A";
+  if (riskScore < 35) return "B";
+  if (riskScore < 60) return "C";
+  if (riskScore < 80) return "D";
+  return "F";
+}
+
+export function recommendationFor(verdict: TrustVerdict, confidence: number): TrustRecommendation {
+  if (verdict === "BLOCK") return "Block";
+  if (verdict === "WARN") return "Manual Review Required";
+  if (confidence < 60) return "Proceed with Caution";
+  return "Proceed";
+}
 
 /**
  * Phase 1 heuristic. Deliberately small and boring — wraps the on-chain
@@ -64,6 +87,8 @@ export async function evaluateTrust(
     return {
       safe: true,
       verdict: "ALLOW",
+      trustGrade: "C",
+      recommendation: "Proceed with Caution",
       riskScore: 20,
       severity: "LOW",
       confidence: 30,
@@ -80,6 +105,8 @@ export async function evaluateTrust(
     return {
       safe: false,
       verdict: "BLOCK",
+      trustGrade: "F",
+      recommendation: "Block",
       riskScore: 80,
       severity: "HIGH",
       confidence: 40,
@@ -120,6 +147,8 @@ export async function evaluateTrust(
   const verdict: TrustVerdict = riskScore >= 60 ? "BLOCK" : riskScore >= 35 ? "WARN" : "ALLOW";
   const safe = verdict === "ALLOW";
   const confidence = token.isContract && token.looksLikeERC20 ? 85 : 60;
+  const trustGrade = gradeFor(riskScore);
+  const recommendation = recommendationFor(verdict, confidence);
 
-  return { safe, verdict, riskScore, severity, confidence, checks, reasoning, token };
+  return { safe, verdict, trustGrade, recommendation, riskScore, severity, confidence, checks, reasoning, token };
 }

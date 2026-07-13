@@ -197,15 +197,15 @@ function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
             <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-            Trust Infrastructure for Autonomous Finance
+            SentinelFi Trust Protocol
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
             The trust infrastructure powering autonomous finance.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-            Every autonomous action needs a risk check. SentinelFi is the shared, public{" "}
-            <span className="text-foreground">risk-intelligence infrastructure</span> that
-            makes on-chain execution safe — for humans, wallets, and agents. HSK-native. Chain-agnostic.
+            <span className="text-foreground">Three lines of code. One trust decision.</span>{" "}
+            Before every autonomous transaction. Get a recommendation, a Trust Grade, and a
+            signed Safety Attestation from a single public endpoint. HSK-native. Chain-agnostic.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
@@ -525,7 +525,7 @@ function HowItWorks() {
     {
       n: "01",
       t: "Trust API",
-      d: "One call before any on-chain action: POST /api/v1/trust/check. Returns ALLOW / WARN / BLOCK, a risk score, plain-English reasoning, and a signed Trust Receipt anyone can verify off-chain.",
+      d: "One call before any on-chain action: POST /api/v1/trust/check. Returns a recommendation (Proceed / Proceed with Caution / Manual Review Required / Block), a Trust Grade (A–F), and plain-English reasoning.",
     },
     {
       n: "02",
@@ -534,8 +534,8 @@ function HowItWorks() {
     },
     {
       n: "03",
-      t: "Public receipts",
-      d: "Every verdict is a cryptographically signed Trust Receipt, stored in a public registry. Independent proof that due diligence was done before an agent signed.",
+      t: "Safety Attestations",
+      d: "Every decision returns a cryptographically signed Safety Attestation, stored in a public registry. Independent proof that due diligence occurred before an agent signed.",
     },
   ];
   return (
@@ -646,23 +646,27 @@ function ForBuilders() {
             </div>
             <pre className="overflow-x-auto p-5 text-[13px] leading-relaxed">
               <code className="font-mono">
-                <span className="text-muted-foreground"># Claude / ChatGPT / Cursor / any MCP client</span>
+                <span className="text-muted-foreground">{"// Trust checkpoint before every autonomous transaction"}</span>
                 {"\n"}
-                <span className="text-muted-foreground"># Add server URL:</span>
+                <span className="text-foreground">{"const verdict = await sentinel.check({"}</span>
                 {"\n"}
-                <span className="text-emerald-300">https://sentidefi.lovable.app/mcp</span>
+                <span className="text-foreground">{"  chainId: 177, action: \"swap\", contract"}</span>
+                {"\n"}
+                <span className="text-foreground">{"});"}</span>
                 {"\n\n"}
-                <span className="text-muted-foreground"># Then just ask:</span>
+                <span className="text-cyan-300">{"if (verdict.recommendation !== \"Proceed\") {"}</span>
                 {"\n"}
-                <span className="text-cyan-300">{"> scan token 0x7f3a…b91e on HSK"}</span>
+                <span className="text-cyan-300">{"  throw new Error(\"Unsafe transaction\");"}</span>
                 {"\n"}
-                <span className="text-foreground">{"→ score: 82  HIGH RISK"}</span>
-                {"\n"}
-                <span className="text-foreground">{"  reason: unlocked LP, 64% top holder"}</span>
+                <span className="text-cyan-300">{"}"}</span>
                 {"\n\n"}
-                <span className="text-cyan-300">{"> what's in wallet 0xb9C5…Ded66?"}</span>
+                <span className="text-emerald-300">{"executeTransaction();"}</span>
+                {"\n\n"}
+                <span className="text-muted-foreground">{"// verdict.trustGrade      → \"A\""}</span>
                 {"\n"}
-                <span className="text-foreground">{"→ HSK: 12.4  USDT: 830  total $1,204"}</span>
+                <span className="text-muted-foreground">{"// verdict.recommendation  → \"Proceed\""}</span>
+                {"\n"}
+                <span className="text-muted-foreground">{"// verdict.attestation     → signed Safety Attestation"}</span>
               </code>
             </pre>
           </div>
