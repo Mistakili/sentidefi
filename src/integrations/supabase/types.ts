@@ -59,6 +59,69 @@ export type Database = {
         }
         Relationships: []
       }
+      trust_receipts: {
+        Row: {
+          action: string
+          agent_id: string | null
+          attestor: string
+          chain_id: number
+          checks: Json
+          confidence: number
+          contract: string | null
+          created_at: string
+          id: string
+          reasoning: Json
+          reasoning_hash: string
+          receipt_id: string
+          risk_score: number
+          severity: string
+          signature: string
+          tx_hash: string | null
+          verdict: string
+          wallet: string | null
+        }
+        Insert: {
+          action: string
+          agent_id?: string | null
+          attestor: string
+          chain_id: number
+          checks?: Json
+          confidence: number
+          contract?: string | null
+          created_at?: string
+          id?: string
+          reasoning?: Json
+          reasoning_hash: string
+          receipt_id: string
+          risk_score: number
+          severity: string
+          signature: string
+          tx_hash?: string | null
+          verdict: string
+          wallet?: string | null
+        }
+        Update: {
+          action?: string
+          agent_id?: string | null
+          attestor?: string
+          chain_id?: number
+          checks?: Json
+          confidence?: number
+          contract?: string | null
+          created_at?: string
+          id?: string
+          reasoning?: Json
+          reasoning_hash?: string
+          receipt_id?: string
+          risk_score?: number
+          severity?: string
+          signature?: string
+          tx_hash?: string | null
+          verdict?: string
+          wallet?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
