@@ -13,6 +13,7 @@ import { Route as VerifiedRouteImport } from './routes/verified'
 import { Route as PortfolioRouteImport } from './routes/portfolio'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DocsRouteImport } from './routes/docs'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as CopilotRouteImport } from './routes/copilot'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
@@ -40,6 +41,11 @@ const McpRoute = McpRouteImport.update({
 const DocsRoute = DocsRouteImport.update({
   id: '/docs',
   path: '/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CopilotRoute = CopilotRouteImport.update({
@@ -90,6 +96,7 @@ const ApiV1TrustCheckRoute = ApiV1TrustCheckRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/demo': typeof DemoRoute
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/demo': typeof DemoRoute
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/copilot': typeof CopilotRoute
+  '/demo': typeof DemoRoute
   '/docs': typeof DocsRoute
   '/mcp': typeof McpRoute
   '/portfolio': typeof PortfolioRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/copilot'
+    | '/demo'
     | '/docs'
     | '/mcp'
     | '/portfolio'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/copilot'
+    | '/demo'
     | '/docs'
     | '/mcp'
     | '/portfolio'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/copilot'
+    | '/demo'
     | '/docs'
     | '/mcp'
     | '/portfolio'
@@ -178,6 +190,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CopilotRoute: typeof CopilotRoute
+  DemoRoute: typeof DemoRoute
   DocsRoute: typeof DocsRoute
   McpRoute: typeof McpRoute
   PortfolioRoute: typeof PortfolioRoute
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       path: '/docs'
       fullPath: '/docs'
       preLoaderRoute: typeof DocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/copilot': {
@@ -282,6 +302,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CopilotRoute: CopilotRoute,
+  DemoRoute: DemoRoute,
   DocsRoute: DocsRoute,
   McpRoute: McpRoute,
   PortfolioRoute: PortfolioRoute,
