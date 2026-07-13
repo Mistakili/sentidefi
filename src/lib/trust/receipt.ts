@@ -1,7 +1,17 @@
 import { Wallet, keccak256, toUtf8Bytes, verifyMessage } from "ethers";
-import type { TrustChecks, TrustSeverity, TrustVerdict } from "./engine";
+import type {
+  TrustChecks,
+  TrustGrade,
+  TrustRecommendation,
+  TrustSeverity,
+  TrustVerdict,
+} from "./engine";
 
-export type TrustReceipt = {
+/**
+ * A cryptographically signed proof that a trust check ran with a specific
+ * verdict. Externally we call this a "Safety Attestation" — same object.
+ */
+export type SafetyAttestation = {
   receiptId: string;
   issuedAt: string;
   chainId: number;
@@ -11,6 +21,8 @@ export type TrustReceipt = {
   action: string;
   riskScore: number;
   verdict: TrustVerdict;
+  trustGrade: TrustGrade;
+  recommendation: TrustRecommendation;
   severity: TrustSeverity;
   confidence: number;
   checks: TrustChecks;
@@ -18,9 +30,11 @@ export type TrustReceipt = {
   attestor: string;
   signature: string;
 };
+// Back-compat alias (internal only).
+export type TrustReceipt = SafetyAttestation;
 
 export type ReceiptInput = Omit<
-  TrustReceipt,
+  SafetyAttestation,
   "receiptId" | "issuedAt" | "reasoningHash" | "attestor" | "signature"
 > & { reasoning: string[] };
 
@@ -29,10 +43,10 @@ export type ReceiptInput = Omit<
  * to the format is a breaking change — bump the version prefix.
  */
 function canonicalPayload(
-  r: Omit<TrustReceipt, "attestor" | "signature">,
+  r: Omit<SafetyAttestation, "attestor" | "signature">,
 ): string {
   return [
-    "sentinelfi-trust-receipt/v1",
+    "sentinelfi-safety-attestation/v2",
     r.receiptId,
     r.issuedAt,
     String(r.chainId),
@@ -42,6 +56,8 @@ function canonicalPayload(
     r.action,
     String(r.riskScore),
     r.verdict,
+    r.trustGrade,
+    r.recommendation,
     r.severity,
     String(r.confidence),
     JSON.stringify(r.checks),
@@ -59,7 +75,7 @@ function randomId(): string {
   return g.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
-export async function signReceipt(input: ReceiptInput): Promise<TrustReceipt> {
+export async function signReceipt(input: ReceiptInput): Promise<SafetyAttestation> {
   const pk = process.env.HSK_ATTESTOR_PRIVATE_KEY;
   if (!pk) throw new Error("HSK_ATTESTOR_PRIVATE_KEY not configured");
   const wallet = new Wallet(pk);
@@ -78,6 +94,8 @@ export async function signReceipt(input: ReceiptInput): Promise<TrustReceipt> {
     action: input.action,
     riskScore: input.riskScore,
     verdict: input.verdict,
+    trustGrade: input.trustGrade,
+    recommendation: input.recommendation,
     severity: input.severity,
     confidence: input.confidence,
     checks: input.checks,
@@ -97,7 +115,7 @@ export async function signReceipt(input: ReceiptInput): Promise<TrustReceipt> {
  * Recover the signer from a receipt and reasoning. Callers can verify
  * receipts entirely off-chain given only the attestor's public address.
  */
-export function verifyReceipt(receipt: TrustReceipt, reasoning: string[]): {
+export function verifyReceipt(receipt: SafetyAttestation, reasoning: string[]): {
   ok: boolean;
   signer: string;
   expected: string;
