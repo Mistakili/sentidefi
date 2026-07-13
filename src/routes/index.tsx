@@ -197,15 +197,15 @@ function Hero() {
         <div className="mx-auto max-w-3xl text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
             <span className="size-1.5 animate-pulse rounded-full bg-primary" />
-            Trust Infrastructure for Autonomous Finance
+            SentinelFi Trust Protocol
           </div>
           <h1 className="mt-6 text-balance text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
             The trust infrastructure powering autonomous finance.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-            Every autonomous action needs a risk check. SentinelFi is the shared, public{" "}
-            <span className="text-foreground">risk-intelligence infrastructure</span> that
-            makes on-chain execution safe — for humans, wallets, and agents. HSK-native. Chain-agnostic.
+            <span className="text-foreground">Three lines of code. One trust decision.</span>{" "}
+            Before every autonomous transaction. Get a recommendation, a Trust Grade, and a
+            signed Safety Attestation from a single public endpoint. HSK-native. Chain-agnostic.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
