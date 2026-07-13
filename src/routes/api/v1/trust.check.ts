@@ -18,6 +18,7 @@ const BodySchema = z.object({
   token: AddressSchema.optional(),
   txData: z.string().optional(),
   agentId: z.string().max(128).optional(),
+  anchor: z.boolean().optional().default(false),
 });
 
 function json(body: unknown, status = 200) {
@@ -43,7 +44,8 @@ export const Route = createFileRoute("/api/v1/trust/check")({
           return json({ error: "Invalid input", details: parsed.error.flatten() }, 400);
         }
         try {
-          const result = await runTrustCheck(parsed.data);
+          const { anchor, ...trustInput } = parsed.data;
+          const result = await runTrustCheck(trustInput, { anchor });
           return json(result);
         } catch (e) {
           const msg = e instanceof Error ? e.message : String(e);
