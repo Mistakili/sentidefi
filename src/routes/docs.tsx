@@ -22,6 +22,7 @@ export const Route = createFileRoute("/docs")({
 });
 
 const SECTIONS = [
+  { id: "trust-api", label: "Trust API" },
   { id: "overview", label: "Overview" },
   { id: "mcp", label: "MCP Server" },
   { id: "copilot", label: "The Copilot" },
@@ -80,6 +81,80 @@ function DocsPage() {
             EVM chain. One public MCP endpoint. Three read-only tools. Any caller plugs in
             in minutes — no SDK, no keys, no scraping.
           </p>
+
+          <section id="trust-api">
+            <h2>0. Trust API — the one endpoint</h2>
+            <p>
+              Before any AI agent, wallet, or protocol executes an on-chain action, ask
+              SentinelFi one question: <em>is this action safe?</em>
+            </p>
+            <p><strong>Endpoint.</strong> <code>POST /api/v1/trust/check</code> — public, no auth.</p>
+            <h3>Request</h3>
+            <pre><code>{`curl -X POST https://sentidefi.lovable.app/api/v1/trust/check \\
+  -H "content-type: application/json" \\
+  -d '{
+    "chainId": 177,
+    "action": "swap",
+    "contract": "0xb9c5fcca50c2a8ed5aa9cc6fa030f0acdc7ded66",
+    "wallet":   "0x0000000000000000000000000000000000000000",
+    "agentId":  "my-agent-v1"
+  }'`}</code></pre>
+            <h3>Response</h3>
+            <pre><code>{`{
+  "safe": true,
+  "verdict": "ALLOW",
+  "riskScore": 18,
+  "severity": "LOW",
+  "confidence": 85,
+  "checks": {
+    "isContract": true,
+    "hasERC20Metadata": true,
+    "bytecodeSizeOk": true,
+    "verifiedContract": false,
+    "knownExploit": false
+  },
+  "reasoning": [
+    "Address is a deployed contract.",
+    "ERC20 metadata present: USDT / Tether USD.",
+    "Bytecode size 3812 bytes within normal range."
+  ],
+  "trustReceipt": {
+    "receiptId": "…",
+    "issuedAt":  "2026-07-13T…Z",
+    "chainId":   177,
+    "contract":  "0x…",
+    "action":    "swap",
+    "riskScore": 18,
+    "verdict":   "ALLOW",
+    "reasoningHash": "0x…",
+    "attestor":  "0x…",
+    "signature": "0x…"
+  }
+}`}</code></pre>
+            <h3>Trust Receipts</h3>
+            <p>
+              Every check returns a cryptographically signed receipt. The signature covers a
+              stable canonical payload plus a <code>keccak256</code> hash of the reasoning array.
+              Anyone with the attestor's public address can verify a receipt off-chain — no
+              chain call, no SentinelFi call required.
+            </p>
+            <pre><code>{`import { verifyReceipt } from "@/lib/trust/receipt";
+
+const { ok, signer, expected } = verifyReceipt(response.trustReceipt, response.reasoning);
+// ok === true when signer === expected AND the reasoning hash matches`}</code></pre>
+            <h3>Same call, over MCP</h3>
+            <p>
+              The Trust API is exposed as an MCP tool <code>check_trust</code> alongside our
+              existing tools. Any MCP-aware agent (Claude, ChatGPT, Cursor, Codex) can call it
+              natively — no HTTP glue, no SDK.
+            </p>
+            <h3>Supported chains</h3>
+            <p>
+              HSK Chain (177) is live. Additional EVMs plug in through a single chain adapter
+              (<code>src/lib/chains/adapters/*</code>) — the Trust API and MCP tool never
+              import chain-specific code.
+            </p>
+          </section>
 
           <section id="overview">
             <h2>1. Overview</h2>

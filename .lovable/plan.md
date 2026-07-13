@@ -1,101 +1,129 @@
+# SentinelFi Phase 1: Trust API + Trust Receipts
 
-# Reposition SentinelFi → Trust Infrastructure (and how BotChain plugs in)
+Stop shipping features. Build one thing: a single endpoint every AI agent, wallet, and protocol calls before executing an on-chain action, and a signed Trust Receipt that proves the check happened. Everything else (policies, agent profiles, registry search UI, dashboards) is Phase 2+ and explicitly out of scope for this plan.
 
-Agreed with the analysis. Two shifts, in this order.
+## What we're building
 
----
+1. **Trust API** — one public endpoint: `POST /api/v1/trust/check`
+2. **Trust Receipt** — every successful check emits a signed, independently verifiable receipt
+3. **Chain adapter layer** — HSK today, BOT Chain next, new EVMs in ~50 lines
+4. **MCP tool** — `check_trust` exposed through the existing MCP server so agents can call it natively
+5. **Docs page rewrite** — a single "Integrate SentinelFi in 3 minutes" story pointed at agent/wallet/protocol devs
 
-## Part 1 — Reposition the landing page (this turn)
+Not in this plan: Policy Engine, Agent Profiles, Registry search UI, dashboard redesign, BOT Chain contract deploy (we wire the adapter + config; deploy happens when BOT gives us an RPC + funded attestor).
 
-Goal: stop sounding like "another AI safety app," start sounding like a category-defining infrastructure layer that agents *and* humans depend on. De-emphasize the Copilot to a reference client.
+## The endpoint
 
-### 1. Hero rewrite (`src/routes/index.tsx`)
+`POST /api/v1/trust/check` — public, unauthenticated, rate-limited by IP.
 
-- **Eyebrow / category tag:** `Trust Infrastructure for Autonomous Finance`
-- **Headline:** `The trust layer every wallet, protocol, and AI agent calls before touching an EVM chain.`
-- **Subhead:** `Every autonomous action needs a risk check. SentinelFi is the shared, public infrastructure that makes on-chain execution safe — for humans, wallets, and agents.`
-- **Primary CTA:** `Read the docs` → `/docs`
-- **Secondary CTA:** `Try the Copilot (reference client)` → `/copilot`
-  Renaming the CTA reframes Copilot as a demo of the infra, not the product.
+Request:
+```
+{
+  "chainId": 177,
+  "action": "swap" | "approve" | "transfer" | "contract_call",
+  "contract": "0x…",      // required for token/contract actions
+  "wallet":   "0x…",      // optional — caller's wallet
+  "token":    "0x…",      // optional — token being touched
+  "txData":   "0x…",      // optional — raw calldata for simulation later
+  "agentId":  "string"     // optional — for future reputation
+}
+```
 
-### 2. Language scrub across the page
+Response:
+```
+{
+  "safe": true,
+  "verdict": "ALLOW" | "WARN" | "BLOCK",
+  "riskScore": 0-100,
+  "severity": "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
+  "confidence": 0-100,
+  "checks": {
+    "verifiedContract": true,
+    "isContract": true,
+    "hasERC20Metadata": true,
+    "bytecodeSizeOk": true,
+    "knownExploit": false
+  },
+  "reasoning": ["Contract source verified", "…"],
+  "trustReceipt": {
+    "receiptId": "uuid",
+    "issuedAt": "ISO8601",
+    "chainId": 177,
+    "contract": "0x…",
+    "wallet": "0x…",
+    "agentId": "…",
+    "action": "swap",
+    "riskScore": 18,
+    "verdict": "ALLOW",
+    "reasoningHash": "0x… (keccak256 of canonical reasoning)",
+    "attestor": "0x…",
+    "signature": "0x… (EIP-191 signature over canonical payload)"
+  }
+}
+```
 
-Remove or downgrade the word "AI" everywhere it isn't load-bearing. Replace with: **agents, copilots, wallets, automation, infrastructure, trust, risk intelligence, MCP**.
+The receipt is verifiable off-chain by anyone with the attestor's public address — no chain call required. Optional on-chain anchoring reuses the existing `RiskRegistry.publish` path.
 
-Specific swaps:
-- "AI Copilot" → "Reference Copilot" (and demote in nav order: Docs, MCP, Copilot)
-- "AI agents call…" → "Agents, wallets, and copilots call…"
-- "AI-generated verdict" → "Risk verdict"
-- `WhyNow` headline → `Autonomous finance is arriving faster than its safety layer.`
+## How Phase 1 maps to what already exists
 
-### 3. Restructure sections into an infra narrative
+Reuse, don't rebuild:
+- **Risk logic**: today's `scan_token` tool already reads `getTokenOnChainData` (contract vs EOA, ERC20 metadata, bytecode size). That becomes the initial `checks` block — we're not inventing new heuristics in Phase 1, we're wrapping the ones we have behind a stable contract.
+- **Attestor keypair**: `HSK_ATTESTOR_PRIVATE_KEY` + `HSK_REGISTRY_ADDRESS` are already configured. The receipt signer uses the same key.
+- **Persistence**: `risk_scans` table already exists; we add a sibling `trust_receipts` table (id, receipt_id, chain_id, contract, wallet, agent_id, action, risk_score, verdict, reasoning_hash, attestor, signature, tx_hash nullable, created_at) with a narrow `TO anon SELECT` policy for public verification.
+- **MCP**: append one tool `check_trust` alongside the three existing ones. Same file layout under `src/lib/mcp/tools/`.
 
-Replace the current section order with:
+## Chain-agnostic architecture
 
-1. **Hero** (above)
-2. **The three primitives** — a single strip showing what SentinelFi actually is:
-   - `MCP Endpoint` — one URL, three read-only tools
-   - `Risk Registry` — public, on-chain verdicts with tx-hash provenance
-   - `Risk Intelligence Feed` — every scan, queryable by anyone
-3. **Why now** (rewritten, no "AI" first-word framing)
-4. **Live metrics strip** (keep — real numbers from `risk_scans` are the strongest infra signal)
-5. **Built for** — reframe as *"Who plugs into SentinelFi"*: Wallets · Protocols · Chains · Agents (four columns, not a logo row of AI clients only)
-6. **Copilot as reference client** — one small card, honest label: *"See how an agent uses SentinelFi. The Copilot is a reference implementation — the same tools are available to any MCP client."*
-7. **For builders** — code snippet of an MCP call, link to `/docs`
-8. **Footer CTA:** `Don't sign blind. Scan first.` (keep)
+Everything chain-specific gets pushed into `src/lib/chains/adapters/`:
 
-### 4. Metadata (`head()` in `src/routes/index.tsx`)
+```text
+src/lib/chains/
+  index.ts          # existing registry (HSK, BOT placeholder) — unchanged shape
+  adapters/
+    types.ts        # ChainAdapter interface
+    hsk.ts          # wraps existing hsk-rpc.server.ts
+    bot.ts          # stub; activates when BOT RPC lands
+  registry.ts       # getAdapter(chainId) -> ChainAdapter
+```
 
-- `<title>`: `SentinelFi — Trust Infrastructure for Autonomous Finance`
-- `<meta name="description">`: `The public trust layer every wallet, protocol, and AI agent calls before touching an EVM chain. MCP-native, chain-agnostic, launched on HSK.`
-- Matching `og:title` / `og:description` / `twitter:card`.
+`ChainAdapter` interface:
+```
+getTokenOnChainData(address)
+getBytecode(address)
+isContract(address)
+simulateTx?(txData)   // optional, Phase 2
+```
 
-### 5. Docs page (`src/routes/docs.tsx`) — light touch
+The Trust API and MCP tool only talk to `getAdapter(chainId)` — they never import HSK-specific code. Adding BOT/Base/Arb = one adapter file + one entry in `CHAINS`.
 
-Update the opening paragraph and page `<title>` to mirror the new positioning ("Trust Infrastructure for Autonomous Finance"). No structural rewrite this turn.
+## Files touched
 
-**Out of scope this turn:** backend, MCP tools, contracts, Copilot UI internals. Pure positioning/frontend.
+Create:
+- `src/routes/api/v1/trust.check.ts` — the public POST endpoint (under `/api/` is public on published sites, rate-limit by IP header)
+- `src/lib/trust/engine.ts` — pure function: `(input, adapter) -> { checks, reasoning, riskScore, verdict, severity, confidence }`
+- `src/lib/trust/receipt.ts` — canonicalize + sign + verify helpers (ethers `Wallet.signMessage` over a stable JSON string; export `verifyReceipt()` for docs)
+- `src/lib/chains/adapters/{types,hsk,bot}.ts` + `src/lib/chains/registry.ts`
+- `src/lib/mcp/tools/check-trust.ts` — MCP wrapper around the same engine
+- One migration: `trust_receipts` table + GRANTs + RLS + public read policy
 
----
+Edit:
+- `src/lib/mcp/index.ts` — register `check_trust`
+- `src/routes/docs.tsx` — replace body with the integration story (curl example, TS example, MCP example, "verify a receipt" snippet)
+- `src/routes/index.tsx` — CTAs point at `/docs` and the API; keep "The trust infrastructure powering autonomous finance." headline; update the "How it works" section to reflect the single-endpoint story
+- `src/lib/mcp/tools/scan-token.ts` — leave as-is (backwards compatible) but note in its description that `check_trust` is the preferred entrypoint
 
-## Part 2 — The BotChain playbook (do NOT build this turn)
+Do NOT touch: `RiskRegistry.sol`, existing `risk_scans` flow, Copilot page (it stays as a reference client), portfolio/wallet code.
 
-This is the strategic answer to *"when it's time to focus on BotChain, how do we do it?"* — captured so we execute cleanly when the moment comes. Nothing here ships today.
+## Acceptance checks
 
-The whole point of the infrastructure framing is that **onboarding a new chain should be boring**. On SentinelFi's current architecture, BotChain support is a config change plus a dataset, not a rebuild.
+- `curl -X POST .../api/v1/trust/check` with a real HSK token returns a full verdict + signed receipt in < 2s
+- The receipt verifies off-chain: `verifyReceipt(receipt)` returns the attestor address without any RPC call
+- `check_trust` MCP tool is visible in `.lovable/mcp/manifest.json` after running the extractor
+- Adding BOT Chain later = fill in `adapters/bot.ts` + flip `status: "live"` in the chain registry; no other file changes
+- `/docs` page shows: what it is (1 line), the endpoint, a curl, a TS snippet, an MCP snippet, and how to verify a receipt
 
-### Step 1 — Flip the chain registry (1 file)
-`src/lib/chains.ts` already has a `BOTCHAIN` placeholder with `status: "coming-soon"`.
-When BotChain publishes its production RPC + explorer:
-- Fill in `rpcUrl`, `explorer`, `nativeCurrency`
-- Add the top ~5 tracked tokens (native + major stables + wrapped native)
-- Flip `status: "live"`
+## What's explicitly deferred to Phase 2
 
-Every consumer (`getLiveChain`, `LIVE_CHAINS`, portfolio, MCP tools) picks it up automatically. Zero code changes elsewhere.
+Policy Engine, Agent Profiles, Registry search UI, dashboard redesign, transaction simulation, on-chain receipt anchoring by default, SDK package on npm, deploying `RiskRegistry.sol` to BOT Chain. Every one of these becomes trivial once Phase 1 lands because the engine and adapter boundaries are already in place.
 
-### Step 2 — Extend the MCP tools with an explicit `chainId`
-`scan_token` and `get_wallet_portfolio` already accept `chainId` (default HSK). `list_recent_risk_scans` needs one small addition: a `chain_id` column on `risk_scans` + optional filter in the tool. Migration + tool patch, ~30 min of work.
-
-### Step 3 — Wallet UX
-`WalletButton` already supports `wallet_switchEthereumChain`. Add BotChain to the switcher dropdown once step 1 lands.
-
-### Step 4 — On-chain attestation on BotChain
-Deploy the existing `contracts/RiskRegistry.sol` to BotChain testnet, add its address to `src/lib/registry.server.ts` chain map. Same contract, same ABI — the whole point of writing it chain-agnostic.
-
-### Step 5 — Positioning move (this is the real work)
-The technical lift is small. The *narrative* lift is what wins:
-- Publish a "BotChain support is live" post the day their mainnet opens
-- Seed the public `risk_scans` feed with the first N BotChain contracts *before* announcing — so the feed already looks alive
-- Pitch BotChain's foundation directly: *"You don't need to build a scanner. SentinelFi is already there."* This is exactly the wallet/chain cold-start pitch on the current README, applied concretely.
-- Add BotChain to the `/docs` "Supported chains" table and the landing page's chain badges
-
-### Step 6 — Repeat for every EVM chain after
-Base, BSC, Arbitrum, HyperEVM — same 6 steps. The moat is that we've done it once cleanly, so doing it again is a config PR.
-
-**Trigger to execute Part 2:** BotChain mainnet RPC is public and stable, OR HSK hackathon results give us a reason to expand publicly. Until then, keep the placeholder visible on the site as a "coming soon" credibility signal (already handled by `LIVE_CHAINS` filter).
-
----
-
-## Approve to build Part 1 now
-
-Part 2 is documented and ready — no code changes today. Say the word and I'll ship the repositioning in a single edit to `src/routes/index.tsx` (plus the small `docs.tsx` header tweak).
+Approve this and I'll implement it end-to-end in one pass.

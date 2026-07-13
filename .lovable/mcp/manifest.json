@@ -13,6 +13,63 @@
     },
     "tools": [
       {
+        "name": "check_trust",
+        "title": "Check trust (Trust API)",
+        "description": "The single question every AI agent, wallet, or protocol should ask before executing an on-chain action on a supported EVM chain: is this action safe? Returns a structured verdict (ALLOW / WARN / BLOCK) with risk score, severity, on-chain checks, plain-English reasoning, and a cryptographically signed Trust Receipt that can be verified off-chain by anyone with the attestor's public address. HSK Chain live today; BotChain and additional EVMs plug into the same interface.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": false,
+          "openWorldHint": true
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {
+            "chainId": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991,
+              "description": "EVM chain id (177 = HSK Chain)."
+            },
+            "action": {
+              "type": "string",
+              "enum": [
+                "swap",
+                "approve",
+                "transfer",
+                "contract_call"
+              ],
+              "description": "The kind of on-chain action being evaluated."
+            },
+            "contract": {
+              "description": "Target contract address (token, protocol, or destination).",
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            },
+            "wallet": {
+              "description": "Wallet initiating the action (optional, used for context).",
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            },
+            "token": {
+              "description": "Token address if different from `contract`.",
+              "type": "string",
+              "pattern": "^0x[0-9a-fA-F]{40}$"
+            },
+            "agentId": {
+              "description": "Stable identifier of the calling agent (for future reputation).",
+              "type": "string",
+              "maxLength": 128
+            }
+          },
+          "required": [
+            "chainId",
+            "action"
+          ]
+        },
+        "outputSchema": null
+      },
+      {
         "name": "scan_token",
         "title": "Scan HSK token",
         "description": "Fetch live on-chain data for a token contract on HSK Chain (chainId 177): whether the address is a contract or EOA, ERC20 metadata (name, symbol, decimals, totalSupply), and bytecode size. Use as the first step for any risk analysis of a token address.",
