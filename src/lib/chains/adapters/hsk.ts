@@ -1,5 +1,5 @@
-import { getTokenOnChainData } from "@/lib/hsk-rpc.server";
-import type { ChainAdapter } from "./types";
+import { getTokenOnChainData as _get } from "@/lib/hsk-rpc.server";
+import type { ChainAdapter, TokenOnChainData } from "./types";
 
 const HSK_RPC_URL = "https://mainnet.hsk.xyz";
 
@@ -18,7 +18,23 @@ async function rpc<T>(method: string, params: unknown[]): Promise<T> {
 export const hskAdapter: ChainAdapter = {
   chainId: 177,
   name: "HashKey Chain",
-  getTokenOnChainData,
+  async getTokenOnChainData(address: string): Promise<TokenOnChainData> {
+    const r = await _get(address);
+    return {
+      address: r.address,
+      isContract: r.isContract,
+      bytecodeSize: r.bytecodeSize,
+      name: r.name ?? null,
+      symbol: r.symbol ?? null,
+      decimals: r.decimals ?? null,
+      totalSupply: r.totalSupply ?? null,
+      totalSupplyFormatted: r.totalSupplyFormatted ?? null,
+      looksLikeERC20: "looksLikeERC20" in r ? Boolean(r.looksLikeERC20) : false,
+      chainId: "chainId" in r ? (r.chainId as number) : 177,
+      rpcUrl: "rpcUrl" in r ? (r.rpcUrl as string) : HSK_RPC_URL,
+      note: "note" in r ? (r.note as string) : undefined,
+    };
+  },
   async getBytecode(address: string) {
     return rpc<string>("eth_getCode", [address.toLowerCase(), "latest"]);
   },
