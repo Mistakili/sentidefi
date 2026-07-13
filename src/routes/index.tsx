@@ -21,6 +21,8 @@ function Index() {
     <div className="min-h-screen bg-background text-foreground">
       <Nav />
       <Hero />
+      <TrustFlow />
+      <ForBuilders />
       <TrustBar />
       <WhyNow />
       <MetricsStrip />
@@ -28,7 +30,6 @@ function Index() {
       <Problem />
       <HowItWorks />
       <Features />
-      <ForBuilders />
       <Roadmap />
       <LiveFeed />
       <CTA />
@@ -80,10 +81,10 @@ function LiveFeed() {
           <div>
             <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-400">
               <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              LIVE FEED
+              LATEST ATTESTATIONS
             </div>
-            <h2 className="text-3xl font-bold md:text-4xl">Recently scanned on HSK Chain</h2>
-            <p className="mt-2 text-muted-foreground">Every scan is published to a public registry. Anyone can read it. Any dApp or agent can integrate it.</p>
+            <h2 className="text-3xl font-bold md:text-4xl">Latest Trust Attestations</h2>
+            <p className="mt-2 text-muted-foreground">Every verdict is signed and published to a public registry. Anyone can read it. Any dApp or agent can integrate it.</p>
           </div>
         </div>
 
@@ -204,9 +205,9 @@ function Hero() {
             The trust infrastructure powering autonomous finance.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground md:text-xl">
-            <span className="text-foreground">Three lines of code. One trust decision.</span>{" "}
-            Before every autonomous transaction. Get a recommendation, a Trust Grade, and a
-            signed Safety Attestation from a single public endpoint. HSK-native. Chain-agnostic.
+            Every autonomous transaction deserves a trust check.{" "}
+            <span className="text-foreground">SentinelFi is the public trust protocol</span> that AI agents,
+            wallets, and protocols call before executing on-chain.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <a
@@ -227,6 +228,14 @@ function Hero() {
             >
               See reference Copilot
             </a>
+          </div>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
+            <span className="uppercase tracking-wider">Compatible with</span>
+            <span className="font-semibold text-foreground/80">Claude</span>
+            <span className="font-semibold text-foreground/80">Cursor</span>
+            <span className="font-semibold text-foreground/80">ChatGPT</span>
+            <span className="font-semibold text-foreground/80">Codex</span>
+            <span className="font-semibold text-foreground/80">Any MCP client</span>
           </div>
         </div>
 
@@ -268,7 +277,7 @@ function RiskCard() {
             <div>
               <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
                 <span className={`size-1.5 rounded-full ${scoreShown ? "bg-destructive" : "bg-primary animate-pulse"}`} />
-                {scoreShown ? "Scan complete" : "Scanning contract…"}
+                {scoreShown ? "TRUST VERDICT" : "LIVE TRUST CHECK"}
               </div>
               <div className="mt-1 flex items-center gap-2 font-mono text-sm text-foreground/80">
                 0x7f3a…b91e
@@ -744,22 +753,61 @@ function CTA() {
     <section id="cta" className="relative overflow-hidden bg-card/30">
       <div className="mx-auto max-w-4xl px-6 py-28 text-center">
         <h2 className="text-balance text-4xl font-bold tracking-tight md:text-6xl">
-          Don't sign blind.{" "}
-          <span className="text-primary">Scan first.</span>
+          Build autonomous finance{" "}
+          <span className="text-primary">on trust.</span>
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
-          Every user and every AI agent should know what they're touching before they sign. Try the Copilot,
-          point your MCP client at{" "}
-          <span className="font-mono text-foreground">sentidefi.lovable.app/mcp</span>,
-          or query the public feed directly.
+          Every autonomous transaction should pass through a trust check before execution.
+          Integrate the protocol, or point your MCP client at{" "}
+          <span className="font-mono text-foreground">sentidefi.lovable.app/mcp</span>.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <a href="/copilot" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
-            Launch Copilot →
-          </a>
-          <a href="/docs" className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold backdrop-blur transition hover:bg-card">
+          <a href="/docs" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
             Read the docs
           </a>
+          <a href="/copilot" className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold backdrop-blur transition hover:bg-card">
+            See reference Copilot
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TrustFlow() {
+  const steps = [
+    { t: "Wallet / Agent", d: "Prepares a transaction" },
+    { t: "Trust Check", d: "POST /api/v1/trust/check" },
+    { t: "Trust Grade", d: "A–F risk verdict" },
+    { t: "Signed Attestation", d: "Verifiable proof of due diligence" },
+    { t: "Execute", d: "Sign only if Proceed" },
+  ];
+  return (
+    <section className="border-b border-border/40 bg-background/60">
+      <div className="mx-auto max-w-6xl px-6 py-20">
+        <div className="mx-auto max-w-2xl text-center">
+          <div className="text-xs font-semibold uppercase tracking-wider text-primary">
+            The trust flow
+          </div>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl">
+            Understand SentinelFi in five boxes.
+          </h2>
+        </div>
+        <div className="mt-12 flex flex-col items-stretch gap-3 md:flex-row md:items-center md:gap-2">
+          {steps.map((s, i) => (
+            <div key={s.t} className="flex flex-1 items-center gap-2 md:flex-col md:gap-3">
+              <div className="flex-1 rounded-xl border border-border bg-card/60 p-4 text-center md:w-full">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-primary">
+                  Step {String(i + 1).padStart(2, "0")}
+                </div>
+                <div className="mt-1 text-sm font-semibold text-foreground">{s.t}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{s.d}</div>
+              </div>
+              {i < steps.length - 1 && (
+                <div className="text-lg font-bold text-primary/60 md:rotate-0">→</div>
+              )}
+            </div>
+          ))}
         </div>
       </div>
     </section>
