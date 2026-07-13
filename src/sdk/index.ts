@@ -115,5 +115,7 @@ export async function verifyAttestation(
   reasoning: string[],
 ): Promise<{ ok: boolean; signer: string; expected: string; reasoningHashMatches: boolean }> {
   const { verifyReceipt } = await import("@/lib/trust/receipt");
-  return verifyReceipt(attestation, reasoning);
+  // The server SafetyAttestation type has narrower `checks`; we widen at the
+  // SDK boundary for portability, so cast at the call.
+  return verifyReceipt(attestation as unknown as Parameters<typeof verifyReceipt>[0], reasoning);
 }
