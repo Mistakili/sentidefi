@@ -19,6 +19,7 @@ import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
+import { Route as ApiV1VerifiedBadgeDotsvgRouteImport } from './routes/api/v1/verified.badge[.]svg'
 import { Route as ApiV1TrustCheckRouteImport } from './routes/api/v1/trust.check'
 
 const VerifiedRoute = VerifiedRouteImport.update({
@@ -74,6 +75,12 @@ const Char91DotmcpChar93InvokeToolToolRoute =
     path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiV1VerifiedBadgeDotsvgRoute =
+  ApiV1VerifiedBadgeDotsvgRouteImport.update({
+    id: '/api/v1/verified/badge.svg',
+    path: '/api/v1/verified/badge.svg',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiV1TrustCheckRoute = ApiV1TrustCheckRouteImport.update({
   id: '/api/v1/trust/check',
   path: '/api/v1/trust/check',
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/v1/trust/check': typeof ApiV1TrustCheckRoute
+  '/api/v1/verified/badge.svg': typeof ApiV1VerifiedBadgeDotsvgRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -105,6 +113,7 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/v1/trust/check': typeof ApiV1TrustCheckRoute
+  '/api/v1/verified/badge.svg': typeof ApiV1VerifiedBadgeDotsvgRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -119,6 +128,7 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/v1/trust/check': typeof ApiV1TrustCheckRoute
+  '/api/v1/verified/badge.svg': typeof ApiV1VerifiedBadgeDotsvgRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/.mcp/invoke-tool/$tool'
     | '/api/v1/trust/check'
+    | '/api/v1/verified/badge.svg'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/.mcp/invoke-tool/$tool'
     | '/api/v1/trust/check'
+    | '/api/v1/verified/badge.svg'
   id:
     | '__root__'
     | '/'
@@ -160,6 +172,7 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/.mcp/invoke-tool/$tool'
     | '/api/v1/trust/check'
+    | '/api/v1/verified/badge.svg'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -174,6 +187,7 @@ export interface RootRouteChildren {
   ApiChatRoute: typeof ApiChatRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiV1TrustCheckRoute: typeof ApiV1TrustCheckRoute
+  ApiV1VerifiedBadgeDotsvgRoute: typeof ApiV1VerifiedBadgeDotsvgRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -248,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/v1/verified/badge.svg': {
+      id: '/api/v1/verified/badge.svg'
+      path: '/api/v1/verified/badge.svg'
+      fullPath: '/api/v1/verified/badge.svg'
+      preLoaderRoute: typeof ApiV1VerifiedBadgeDotsvgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/v1/trust/check': {
       id: '/api/v1/trust/check'
       path: '/api/v1/trust/check'
@@ -271,6 +292,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiChatRoute: ApiChatRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiV1TrustCheckRoute: ApiV1TrustCheckRoute,
+  ApiV1VerifiedBadgeDotsvgRoute: ApiV1VerifiedBadgeDotsvgRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
