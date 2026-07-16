@@ -7,9 +7,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "SentinelFi — Trust Infrastructure for Autonomous Finance" },
-      { name: "description", content: "The public trust layer every wallet, protocol, and AI agent calls before touching an EVM chain. MCP-native, chain-agnostic, launched on HSK." },
+      { name: "description", content: "The public trust layer every wallet, protocol, and AI agent calls before touching an EVM chain. MCP-native, chain-agnostic, live on HSK and BotChain." },
       { property: "og:title", content: "SentinelFi — Trust Infrastructure for Autonomous Finance" },
-      { property: "og:description", content: "The shared, public risk-intelligence layer for humans, wallets, and autonomous agents. MCP-native, chain-agnostic, launched on HSK." },
+      { property: "og:description", content: "The shared, public risk-intelligence layer for humans, wallets, and autonomous agents. MCP-native, chain-agnostic, live on HSK and BotChain." },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -355,7 +355,7 @@ function TrustBar() {
         {[
           ["1 endpoint", "/mcp — public, no login, no key"],
           ["Trust API", "POST /api/v1/trust/check — one call, signed receipt"],
-          ["Any EVM", "HSK live · BotChain-ready · chain-agnostic"],
+          ["Any EVM", "HSK + BotChain live · chain-agnostic"],
           ["Any caller", "Wallets · protocols · copilots · agents"],
         ].map(([n, l]) => (
           <div key={l} className="text-center">
@@ -426,7 +426,7 @@ function MetricsStrip() {
     { n: metrics?.total ?? 0, l: "Contracts scanned", suffix: "live" },
     { n: metrics?.unique ?? 0, l: "Unique addresses", suffix: "live" },
     { n: metrics?.highRisk ?? 0, l: "High-risk detections", suffix: "live" },
-    { n: 1, l: "Chains supported", suffix: "HSK · more soon" },
+    { n: 2, l: "Chains supported", suffix: "HSK · BotChain" },
   ];
   return (
     <section className="border-b border-border/40 bg-background/60">
@@ -455,7 +455,7 @@ function BuiltFor() {
   const groups = [
     { t: "Wallets", d: "MetaMask, Rabby, HashKey Wallet — pre-tx risk warnings via one MCP call." },
     { t: "Protocols", d: "DEXs, launchpads, lending — gate listings, flag pools, score collateral." },
-    { t: "Chains", d: "HSK live. BotChain, Base, BSC drop in with a single registry entry." },
+    { t: "Chains", d: "HSK and BotChain live. Base, BSC and any EVM drop in with a single registry entry." },
     { t: "Agents", d: "Claude, ChatGPT, Cursor, Codex — native 'is this safe?' answers." },
   ];
   return (
@@ -582,7 +582,7 @@ function Features() {
   const items = [
     { icon: Code, t: "MCP-native", d: "Public /mcp endpoint. Zero-auth read tools. Any AI assistant connects in seconds — no SDK to maintain." },
     { icon: Shield, t: "Contract X-ray", d: "Bytecode, supply, ownership, contract-vs-EOA, and mint surface — enough signal to catch the obvious traps today." },
-    { icon: Activity, t: "Chain-agnostic core", d: "A single chains.ts registry. HSK is live; BotChain and any EVM drop in with an RPC and a token list." },
+    { icon: Activity, t: "Chain-agnostic core", d: "A single chains.ts registry. HSK and BotChain are live; any additional EVM drops in with an RPC and a token list." },
     { icon: Sparkles, t: "Explainable verdicts", d: "Plain-English reasoning with citations to the on-chain evidence. No black-box score — auditable by users and integrators." },
     { icon: AlertTriangle, t: "Public dataset", d: "Every scan is written to a public feed with score, level, and tx hash. Wallets, dashboards, and researchers can consume it directly." },
     { icon: Zap, t: "Copilot UX", d: "The same tools, wrapped in a conversational agent that routes wallet lookups, token scans, and history queries automatically." },
@@ -690,6 +690,7 @@ function Roadmap() {
   const shipped = [
     "Public MCP server with 3 read-only tools",
     "HSK-native on-chain reads (name, supply, bytecode, contract vs EOA)",
+    "BotChain testnet live — Safety Attestations anchored on-chain via RiskRegistry",
     "Chain-agnostic registry (chains.ts) — new EVMs drop in fast",
     "Copilot with intent routing (token vs wallet vs history)",
     "Public risk-scan dataset with tx-hash provenance",
@@ -698,7 +699,7 @@ function Roadmap() {
     { t: "Deeper scoring", d: "Liquidity locks, ownership renouncement, mint / blacklist / pause detection, tax + honeypot simulation." },
     { t: "Behavioral signals", d: "Whale-movement patterns, deployer history, rug-pattern matching across the public dataset." },
     { t: "Open methodology", d: "Scoring rules published as versioned, auditable rulesets — so integrating protocols can trust and challenge the verdict." },
-    { t: "Multi-chain rollout", d: "BotChain, Base, BSC, and any HSK-adjacent EVM the ecosystem asks for — same MCP surface, wider coverage." },
+    { t: "Multi-chain rollout", d: "Base, BSC, and any HSK- or BotChain-adjacent EVM the ecosystem asks for — same MCP surface, wider coverage." },
   ];
   return (
     <section id="roadmap" className="border-b border-border/40">
