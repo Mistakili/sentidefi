@@ -1,4 +1,5 @@
 import { JsonRpcProvider, Wallet, Contract } from "ethers";
+import { BOTCHAIN_TESTNET_CHAIN_ID, getChain } from "@/lib/chains";
 
 /**
  * On-chain anchoring for Safety Attestations.
@@ -28,12 +29,13 @@ export type AnchorResult =
   | { status: "error"; error: string };
 
 function envConfig() {
-  const rpcUrl = process.env.BOTCHAIN_RPC_URL;
+  const chain = getChain(BOTCHAIN_TESTNET_CHAIN_ID);
+  const rpcUrl = process.env.BOTCHAIN_RPC_URL ?? chain?.rpcUrl ?? "https://rpc.bohr.life";
   const pk =
     process.env.BOTCHAIN_ATTESTOR_PRIVATE_KEY ?? process.env.HSK_ATTESTOR_PRIVATE_KEY;
   const registry = process.env.BOTCHAIN_REGISTRY_ADDRESS;
-  const explorer = process.env.BOTCHAIN_EXPLORER ?? "";
-  const chainId = Number(process.env.BOTCHAIN_CHAIN_ID ?? 45454);
+  const explorer = process.env.BOTCHAIN_EXPLORER ?? chain?.explorer ?? "https://scan.bohr.life";
+  const chainId = Number(process.env.BOTCHAIN_CHAIN_ID ?? BOTCHAIN_TESTNET_CHAIN_ID);
   return { rpcUrl, pk, registry, explorer, chainId };
 }
 

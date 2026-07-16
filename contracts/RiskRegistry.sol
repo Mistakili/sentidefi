@@ -39,6 +39,14 @@ contract RiskRegistry {
     mapping(address => bool) public isAttestor;
     mapping(address => Verdict) private _verdicts;
 
+    struct AnchoredAttestation {
+        bytes32 payloadHash;
+        address attestor;
+        uint64 anchoredAt;
+    }
+
+    mapping(bytes32 => AnchoredAttestation) private _attestations;
+
     // ---------------------------------------------------------------
     // Events
     // ---------------------------------------------------------------
@@ -49,6 +57,11 @@ contract RiskRegistry {
         Level level,
         address indexed attestor,
         bytes32 reasonHash
+    );
+    event AttestationAnchored(
+        bytes32 indexed attestationId,
+        bytes32 payloadHash,
+        address indexed attestor
     );
     event AttestorSet(address indexed attestor, bool allowed);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
@@ -115,6 +128,18 @@ contract RiskRegistry {
         emit VerdictPublished(token, score, level, msg.sender, reasonHash);
     }
 
+    /// @notice Anchor a signed Safety Attestation by id + payload hash (BotChain flow).
+    function anchorAttestation(bytes32 attestationId, bytes32 payloadHash) external onlyAttestor {
+        require(attestationId != bytes32(0), "RR: zero id");
+        require(payloadHash != bytes32(0), "RR: zero hash");
+        _attestations[attestationId] = AnchoredAttestation({
+            payloadHash: payloadHash,
+            attestor: msg.sender,
+            anchoredAt: uint64(block.timestamp)
+        });
+        emit AttestationAnchored(attestationId, payloadHash, msg.sender);
+    }
+
     // ---------------------------------------------------------------
     // Public reads — the API every HSK dApp can call
     // ---------------------------------------------------------------
@@ -122,6 +147,11 @@ contract RiskRegistry {
     /// @notice Full verdict for a token. Returns zeroed struct if never scanned.
     function riskOf(address token) external view returns (Verdict memory) {
         return _verdicts[token];
+    }
+
+    /// @notice Look up an anchored Safety Attestation by its on-chain id.
+    function attestationOf(bytes32 attestationId) external view returns (AnchoredAttestation memory) {
+        return _attestations[attestationId];
     }
 
     /// @notice Short helper for swap guards. Returns (score, level, isStale).

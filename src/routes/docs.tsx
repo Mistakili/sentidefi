@@ -392,7 +392,7 @@ const { ok, signer, expected } = verifyReceipt(response.attestation, response.re
             <ul>
               <li><strong>HSK Chain</strong> (chainId 177) — live.</li>
               <li><strong>HSK Testnet</strong> (chainId 133) — used for on-chain attestation.</li>
-              <li><strong>BotChain</strong> — scaffolded, enable per launch.</li>
+              <li><strong>BotChain Testnet</strong> (chainId 968) — live via <code>https://rpc.bohr.life</code>.</li>
               <li><strong>Any EVM</strong> (Base, BSC, Arbitrum, etc.) — drop-in via <code>chains.ts</code>.</li>
             </ul>
           </section>

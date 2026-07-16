@@ -1,39 +1,25 @@
+import { BOTCHAIN_TESTNET_CHAIN_ID, getChain } from "@/lib/chains";
 import type { ChainAdapter, TokenOnChainData } from "./types";
 
-/**
- * BotChain adapter.
- *
- * Runs off env-driven configuration so the moment the BotChain team publishes
- * a public RPC and gives us a chainId, we flip a single secret and it's live —
- * no code change, no redeploy of any other module.
- *
- *   BOTCHAIN_RPC_URL   — public JSON-RPC endpoint
- *   BOTCHAIN_CHAIN_ID  — decimal chainId (optional; defaults to 45454)
- *
- * The Trust API, MCP tool, and demo talk only to this adapter through the
- * ChainAdapter interface. Nothing else in the app knows BotChain specifics.
- */
-const DEFAULT_BOT_CHAIN_ID = 45454;
+const DEFAULT_RPC = "https://rpc.bohr.life";
 
-function config(): { chainId: number; rpcUrl: string | null } {
-  const rpcUrl = process.env.BOTCHAIN_RPC_URL ?? null;
-  const chainId = Number(process.env.BOTCHAIN_CHAIN_ID ?? DEFAULT_BOT_CHAIN_ID);
+/**
+ * BotChain adapter — live on BOT Testnet (chainId 968).
+ *
+ * Defaults to the public testnet RPC from the BotChain docs. Override via:
+ *   BOTCHAIN_RPC_URL   — JSON-RPC endpoint
+ *   BOTCHAIN_CHAIN_ID  — decimal chainId (defaults to 968)
+ */
+function config(): { chainId: number; rpcUrl: string } {
+  const chain = getChain(BOTCHAIN_TESTNET_CHAIN_ID);
+  const rpcUrl = process.env.BOTCHAIN_RPC_URL ?? chain?.rpcUrl ?? DEFAULT_RPC;
+  const chainId = Number(process.env.BOTCHAIN_CHAIN_ID ?? BOTCHAIN_TESTNET_CHAIN_ID);
   return { chainId, rpcUrl };
 }
 
-function ensureConfigured(): string {
-  const { rpcUrl } = config();
-  if (!rpcUrl) {
-    throw new Error(
-      "BotChain adapter not configured. Set BOTCHAIN_RPC_URL (and optionally BOTCHAIN_CHAIN_ID) to enable trust checks on BotChain.",
-    );
-  }
-  return rpcUrl;
-}
-
 async function rpc<T>(method: string, params: unknown[]): Promise<T> {
-  const url = ensureConfigured();
-  const res = await fetch(url, {
+  const { rpcUrl } = config();
+  const res = await fetch(rpcUrl, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
@@ -81,7 +67,7 @@ export const botchainAdapter: ChainAdapter = {
   get chainId() {
     return config().chainId;
   },
-  name: "BotChain",
+  name: "BotChain Testnet",
 
   async getBytecode(address) {
     return rpc<string>("eth_getCode", [address.toLowerCase(), "latest"]);
@@ -114,7 +100,7 @@ export const botchainAdapter: ChainAdapter = {
         totalSupply: null,
         looksLikeERC20: false,
         chainId,
-        rpcUrl: rpcUrl ?? undefined,
+        rpcUrl,
         note: "EOA (externally owned account)",
       };
     }
@@ -142,11 +128,11 @@ export const botchainAdapter: ChainAdapter = {
       totalSupply,
       looksLikeERC20,
       chainId,
-      rpcUrl: rpcUrl ?? undefined,
+      rpcUrl,
     };
   },
 };
 
 export function botchainIsConfigured(): boolean {
-  return Boolean(process.env.BOTCHAIN_RPC_URL);
+  return true;
 }

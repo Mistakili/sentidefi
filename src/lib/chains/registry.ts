@@ -1,11 +1,11 @@
-import { getChain } from "@/lib/chains";
+import { BOTCHAIN_TESTNET_CHAIN_ID, getChain } from "@/lib/chains";
 import { hskAdapter } from "./adapters/hsk";
 import { botchainAdapter } from "./adapters/botchain";
 import type { ChainAdapter } from "./adapters/types";
 
 const ADAPTERS: Record<number, ChainAdapter> = {
   [hskAdapter.chainId]: hskAdapter,
-  [botchainAdapter.chainId]: botchainAdapter,
+  [BOTCHAIN_TESTNET_CHAIN_ID]: botchainAdapter,
 };
 
 export function getAdapter(chainId: number): ChainAdapter {

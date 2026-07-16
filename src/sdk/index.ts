@@ -3,7 +3,7 @@
  *
  * Usage:
  *   import { checkTrust, verifyAttestation, getRecommendation } from "@sentinelfi/sdk";
- *   const verdict = await checkTrust({ chainId: 45454, action: "swap", contract });
+ *   const verdict = await checkTrust({ chainId: 968, action: "swap", contract });
  *   if (getRecommendation(verdict) !== "Proceed") throw new Error("Unsafe");
  *
  * Zero dependencies, works in browser / Node / Workers / Deno.

@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
+import { BOTCHAIN_TESTNET_CHAIN_ID } from "@/lib/chains";
 import { runTrustCheck } from "@/lib/trust/service";
 
 const CORS = {
@@ -56,11 +57,24 @@ export const Route = createFileRoute("/api/v1/trust/check")({
         json({
           endpoint: "POST /api/v1/trust/check",
           docs: "/docs",
-          example: {
-            chainId: 177,
-            action: "swap",
-            contract: "0xb9c5fcca50c2a8ed5aa9cc6fa030f0acdc7ded66",
-            wallet: "0x0000000000000000000000000000000000000000",
+          supportedChains: [
+            { chainId: 177, name: "HashKey Chain" },
+            { chainId: BOTCHAIN_TESTNET_CHAIN_ID, name: "BotChain Testnet", rpc: "https://rpc.bohr.life" },
+          ],
+          examples: {
+            hsk: {
+              chainId: 177,
+              action: "swap",
+              contract: "0xb9c5fcca50c2a8ed5aa9cc6fa030f0acdc7ded66",
+              wallet: "0x0000000000000000000000000000000000000000",
+            },
+            botchain: {
+              chainId: BOTCHAIN_TESTNET_CHAIN_ID,
+              action: "swap",
+              contract: "0x0000000000000000000000000000000000000001",
+              agentId: "my-agent",
+              anchor: true,
+            },
           },
         }),
     },

@@ -38,17 +38,18 @@ const HSK: Chain = {
   ],
 };
 
-// Placeholder for the next chain we onboard. Flip to status:"live" and
-// populate tokens/rpcUrl to enable it end-to-end — no other code changes.
+/** BOT Chain Testnet — https://dev-docs.botchain.ai/docs/Developers/json-rpc-endpoint/ */
+export const BOTCHAIN_TESTNET_CHAIN_ID = 968;
+
 const BOTCHAIN: Chain = {
-  id: 45454,
-  idHex: "0xb18e",
-  name: "BotChain",
+  id: BOTCHAIN_TESTNET_CHAIN_ID,
+  idHex: "0x3c8",
+  name: "BotChain Testnet",
   shortName: "BOT",
-  rpcUrl: "",
-  explorer: "",
-  nativeCurrency: { name: "BotChain", symbol: "BOT", decimals: 18 },
-  status: "coming-soon",
+  rpcUrl: "https://rpc.bohr.life",
+  explorer: "https://scan.bohr.life",
+  nativeCurrency: { name: "BOT", symbol: "BOT", decimals: 18 },
+  status: "live",
   tokens: [],
 };
 

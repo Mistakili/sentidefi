@@ -1,0 +1,9 @@
+{
+  "chainId": 968,
+  "rpcUrl": "https://rpc.bohr.life",
+  "explorer": "https://scan.bohr.life",
+  "registry": "0x9De70CA7Aa0BC1CEA1fBa33A1A7510A95B1c9883",
+  "attestor": "0x7D9640ed408b74f1Eb8B745032A4683b25bDd955",
+  "deployer": "0x7D9640ed408b74f1Eb8B745032A4683b25bDd955",
+  "deployedAt": "2026-07-16T17:13:36.824Z"
+}

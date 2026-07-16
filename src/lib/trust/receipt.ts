@@ -1,4 +1,5 @@
 import { Wallet, keccak256, toUtf8Bytes, verifyMessage } from "ethers";
+import { BOTCHAIN_TESTNET_CHAIN_ID } from "@/lib/chains";
 import type {
   TrustChecks,
   TrustGrade,
@@ -6,6 +7,23 @@ import type {
   TrustSeverity,
   TrustVerdict,
 } from "./engine";
+
+const BOTCHAIN_MAINNET_CHAIN_ID = 677;
+
+function resolveAttestorKey(chainId: number): string {
+  const isBot = chainId === BOTCHAIN_TESTNET_CHAIN_ID || chainId === BOTCHAIN_MAINNET_CHAIN_ID;
+  if (isBot) {
+    const bot = process.env.BOTCHAIN_ATTESTOR_PRIVATE_KEY;
+    if (bot) return bot;
+  }
+  const hsk = process.env.HSK_ATTESTOR_PRIVATE_KEY;
+  if (hsk) return hsk;
+  throw new Error(
+    isBot
+      ? "BOTCHAIN_ATTESTOR_PRIVATE_KEY (or HSK_ATTESTOR_PRIVATE_KEY) not configured"
+      : "HSK_ATTESTOR_PRIVATE_KEY not configured",
+  );
+}
 
 /**
  * A cryptographically signed proof that a trust check ran with a specific
@@ -76,9 +94,7 @@ function randomId(): string {
 }
 
 export async function signReceipt(input: ReceiptInput): Promise<SafetyAttestation> {
-  const pk = process.env.HSK_ATTESTOR_PRIVATE_KEY;
-  if (!pk) throw new Error("HSK_ATTESTOR_PRIVATE_KEY not configured");
-  const wallet = new Wallet(pk);
+  const wallet = new Wallet(resolveAttestorKey(input.chainId));
 
   const receiptId = randomId();
   const issuedAt = new Date().toISOString();
