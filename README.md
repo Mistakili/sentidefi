@@ -14,15 +14,16 @@ The agent-callable safety layer for HSK, BotChain, and every EVM chain.
 
 ## What is SentinelFi?
 
-Every new chain hits the same cold-start problem: wallets won't integrate
-without safety data, safety data doesn't exist without scanners, and scanners
-don't build for small chains. Meanwhile the existing scanners (GoPlus, De.Fi,
-Honeypot.is) are **websites, not protocols** — nothing else can plug in.
+Autonomous finance has a trust gap: AI agents, wallets, and protocols execute
+on-chain actions with no shared safety layer. Existing scanners (GoPlus,
+De.Fi, Honeypot.is) are **websites, not protocols** — humans click, agents
+can't call, and no verdict is verifiable after the fact.
 
 SentinelFi is built the opposite way: **infrastructure first, UI second**.
-The same engine that powers our Copilot ships as a public MCP server, so any
-wallet, launchpad, DEX, or AI assistant can call it directly. HSK is the
-launch chain; the architecture is chain-agnostic from day one.
+The same engine that powers our Copilot ships as a public Trust API and MCP
+server, so any agent runtime, wallet, launchpad, or DEX can call it directly.
+Verdicts return as signed **Safety Attestations** anchored on **BotChain** —
+chain-agnostic core, BotChain as the trust anchor.
 
 ---
 
@@ -32,7 +33,7 @@ launch chain; the architecture is chain-agnostic from day one.
 |---|---|
 | **Wallets** (MetaMask, Rabby, HashKey Wallet…) | Pre-transaction risk warnings via one MCP call — no in-house scanner to maintain. |
 | **Protocols** (DEXs, launchpads, lending) | A shared trust primitive — gate listings, flag pools, score collateral. |
-| **Chains** (HSK, BotChain, and beyond) | Instant safety infra so ecosystems don't stay cold waiting for GoPlus to notice them. |
+| **Chains** (BotChain, HSK, and beyond) | Instant safety infra + on-chain anchoring so new ecosystems don't stay cold waiting for GoPlus to notice them. |
 | **AI agents** (Claude, ChatGPT, Cursor, Codex) | Native "is this token safe?" answers grounded in live on-chain data. |
 
 ---
@@ -40,7 +41,7 @@ launch chain; the architecture is chain-agnostic from day one.
 ## Features
 
 - **MCP-native.** Public `/mcp` endpoint, zero-auth read tools.
-- **HSK-first, chain-agnostic core.** New EVMs drop in via `src/lib/chains.ts`.
+- **BotChain-anchored, chain-agnostic core.** Attestations anchor to BotChain's RiskRegistry; new EVMs drop in via `src/lib/chains.ts`.
 - **Contract X-ray.** Live on-chain reads: metadata, supply, contract-vs-EOA, bytecode.
 - **AI Copilot.** Streaming chat that routes intent — token scan vs wallet lookup vs history.
 - **Public risk-scan dataset.** Every verdict is written to a public feed with a tx hash for provenance.
