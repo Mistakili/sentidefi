@@ -181,16 +181,17 @@ const { ok, signer, expected } = verifyReceipt(response.attestation, response.re
           <section id="overview">
             <h2>1. Overview</h2>
             <p>
-              Every new chain has the same cold-start problem: wallets won't integrate without
-              safety data; safety data doesn't exist without scanners; scanners don't build for
-              small chains. Meanwhile the existing scanners (GoPlus, De.Fi, Honeypot.is) are
-              websites, not protocols — nothing else can plug in.
+              Autonomous finance has a trust gap: AI agents, wallets, and protocols execute
+              on-chain actions with no shared safety layer. Existing scanners (GoPlus, De.Fi,
+              Honeypot.is) are websites — humans click, agents can't call, and no verdict
+              is verifiable after the fact.
             </p>
             <p>
               SentinelFi is built the opposite way: <strong>infrastructure first, UI second</strong>.
-              The same engine that powers our Copilot ships as a public MCP server, so any
-              wallet, launchpad, DEX, or AI assistant can call it directly. HSK is the launch
-              chain; the architecture is chain-agnostic from day one.
+              The same engine that powers our Copilot ships as a public Trust API and MCP
+              server, so any agent runtime, wallet, launchpad, or DEX can call it directly.
+              Verdicts return as signed <strong>Safety Attestations</strong> anchored on
+              BotChain — chain-agnostic core, BotChain as the trust anchor.
             </p>
           </section>
 
@@ -411,9 +412,9 @@ const { ok, signer, expected } = verifyReceipt(response.attestation, response.re
                 minutes, not sprints.
               </li>
               <li>
-                <strong>HSK-native from day one.</strong> No major scanner covers HSK yet.
-                On a chain with almost no tooling, being the default safety layer is a real
-                moat while it lasts.
+                <strong>BotChain-anchored trust.</strong> Every verdict is a signed
+                Safety Attestation optionally anchored to BotChain's RiskRegistry —
+                verifiable off-chain by anyone with only the attestor's public address.
               </li>
               <li>
                 <strong>Chain-agnostic core.</strong> One <code>chains.ts</code> entry adds a
