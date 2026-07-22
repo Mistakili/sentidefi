@@ -496,13 +496,14 @@ function _Problem() {
               The problem
             </div>
             <h2 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-              New chains ship faster than <span className="text-muted-foreground">safety tools can follow.</span>
+              Autonomous agents ship faster than <span className="text-muted-foreground">trust infrastructure can follow.</span>
             </h2>
             <p className="mt-5 text-lg leading-relaxed text-muted-foreground">
-              GoPlus, De.Fi, Honeypot.is — none cover HSK. And every one of them is a website,
-              not a protocol. Human traders, wallets, launchpads, and AI agents can't plug in.
-              Users fly blind, builders reinvent the same scanner, chains stay cold. SentinelFi
-              fixes all three with one shared primitive.
+              Every scanner today (GoPlus, De.Fi, Honeypot.is) is a website — humans click,
+              agents can't call. And none of them anchor a verifiable verdict on-chain. So
+              wallets bolt on ad-hoc checks, agent runtimes fly blind, and new chains like
+              BotChain stay cold. SentinelFi ships one shared primitive: an agent-callable
+              Trust API with signed attestations anchored on BotChain.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-3">
