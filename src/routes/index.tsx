@@ -689,18 +689,18 @@ function ForBuilders() {
 
 function Roadmap() {
   const shipped = [
-    "Public MCP server with 3 read-only tools",
-    "HSK-native on-chain reads (name, supply, bytecode, contract vs EOA)",
-    "BotChain testnet live — Safety Attestations anchored on-chain via RiskRegistry",
-    "Chain-agnostic registry (chains.ts) — new EVMs drop in fast",
-    "Copilot with intent routing (token vs wallet vs history)",
-    "Public risk-scan dataset with tx-hash provenance",
+    "BotChain Mainnet RiskRegistry live (chainId 677) — deploy + anchor txs public",
+    "Public Trust API + MCP check_trust — signed Safety Attestations, no keys",
+    "BotChain Testnet parity (968) — same interface for staging",
+    "HSK-native on-chain reads (metadata, supply, bytecode, contract vs EOA)",
+    "Chain-agnostic adapters — new EVMs drop in via chains.ts",
+    "Public risk-scan dataset with provenance",
   ];
   const next = [
     { t: "Deeper scoring", d: "Liquidity locks, ownership renouncement, mint / blacklist / pause detection, tax + honeypot simulation." },
     { t: "Behavioral signals", d: "Whale-movement patterns, deployer history, rug-pattern matching across the public dataset." },
     { t: "Open methodology", d: "Scoring rules published as versioned, auditable rulesets — so integrating protocols can trust and challenge the verdict." },
-    { t: "Multi-chain rollout", d: "Base, BSC, and any HSK- or BotChain-adjacent EVM the ecosystem asks for — same MCP surface, wider coverage." },
+    { t: "Ecosystem embed", d: "Wallet chips, explorer badges, launchpad gates — same primitive, wider surface on BotChain." },
   ];
   return (
     <section id="roadmap" className="border-b border-border/40">
@@ -759,16 +759,16 @@ function CTA() {
           <span className="text-primary">on trust.</span>
         </h2>
         <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
-          Every autonomous transaction should pass through a trust check before execution.
-          Integrate the protocol, or point your MCP client at{" "}
+          BotChain Mainnet is live. Every autonomous transaction should pass a trust check
+          first. Integrate the protocol, or point your MCP client at{" "}
           <span className="font-mono text-foreground">sentidefi.lovable.app/mcp</span>.
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-3">
-          <a href="/docs" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
-            Read the docs
+          <a href="/demo" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition hover:brightness-110">
+            Run mainnet demo
           </a>
-          <a href="/copilot" className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold backdrop-blur transition hover:bg-card">
-            See reference Copilot
+          <a href="/docs" className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold backdrop-blur transition hover:bg-card">
+            Integration docs
           </a>
         </div>
       </div>

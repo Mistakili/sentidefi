@@ -45,16 +45,21 @@ function Verified() {
             The trust standard for AI agents on BotChain.
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-            One trust check before every autonomous transaction. One signed Safety
-            Attestation anchored on-chain. One badge every wallet, launchpad, and
-            explorer can display: <strong className="text-foreground">✓ SentinelFi Verified</strong>.
+            One trust check before every autonomous transaction on{" "}
+            <strong className="text-foreground">BotChain Mainnet (677)</strong>. One signed
+            Safety Attestation anchored on the live RiskRegistry. One badge every wallet,
+            launchpad, and explorer can display:{" "}
+            <strong className="text-foreground">✓ SentinelFi Verified</strong>.
+          </p>
+          <p className="mx-auto mt-4 max-w-xl font-mono text-xs text-muted-foreground">
+            Registry {`0x9De70CA7Aa0BC1CEA1fBa33A1A7510A95B1c9883`}
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-3">
             <Link to="/demo" className="rounded-md bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:brightness-110">
-              See the BotChain flow →
+              Run mainnet demo →
             </Link>
             <Link to="/docs" className="rounded-md border border-border bg-card/60 px-6 py-3 text-sm font-semibold hover:bg-card">
-              Integration spec
+              Integration docs
             </Link>
           </div>
           <div className="mt-14 flex justify-center">

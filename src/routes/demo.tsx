@@ -40,7 +40,8 @@ type CheckResult = {
 };
 
 function Demo() {
-  const [contract, setContract] = useState("0xb9c5fcca50c2a8ed5aa9cc6fa030f0acdc7ded66");
+  // EOA-style address produces a clear BLOCK — good proof the engine is live.
+  const [contract, setContract] = useState("0x0000000000000000000000000000000000000001");
   const [chainId, setChainId] = useState<number>(677);
   const [anchor, setAnchor] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -95,23 +96,38 @@ function Demo() {
 
       <section className="mx-auto max-w-5xl px-6 py-16">
         <div className="text-xs font-semibold uppercase tracking-wider text-primary">
-          Live demo · SentinelFi × BotChain
+          Live demo · SentinelFi × BotChain Mainnet
         </div>
         <h1 className="mt-3 text-4xl font-bold tracking-tight md:text-5xl">
-          The trust checkpoint, in one call.
+          The trust checkpoint every agent hits first.
         </h1>
         <p className="mt-4 max-w-2xl text-muted-foreground">
-          Enter any contract. We call the Trust Protocol, sign a Safety Attestation,
-          and (optionally) anchor it on BotChain. This is exactly the flow an AI
-          agent would run before signing a transaction.
+          Enter any contract on BotChain. We read live chain state, return a Trust Grade +
+          recommendation, sign a Safety Attestation, and optionally anchor it on the mainnet
+          RiskRegistry — the same flow an autonomous agent runs before signing.
         </p>
+
+        <div className="mt-6 grid gap-2 rounded-xl border border-emerald-400/25 bg-emerald-400/5 p-4 text-xs sm:grid-cols-3">
+          <div>
+            <div className="text-muted-foreground">Mainnet registry</div>
+            <div className="mt-0.5 font-mono text-[11px] text-emerald-400">0x9De70…9883</div>
+          </div>
+          <div>
+            <div className="text-muted-foreground">Chain ID</div>
+            <div className="mt-0.5 font-semibold text-foreground">677 · BotChain</div>
+          </div>
+          <div>
+            <div className="text-muted-foreground">Surface</div>
+            <div className="mt-0.5 font-semibold text-foreground">REST + MCP · no keys</div>
+          </div>
+        </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-[2fr,3fr]">
           <div className="rounded-2xl border border-border bg-card/60 p-6">
             <label className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               Target chain
             </label>
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex flex-wrap gap-2">
               {[
                 { id: 677, label: "BotChain Mainnet" },
                 { id: 968, label: "BotChain Testnet" },
@@ -147,8 +163,12 @@ function Demo() {
                 checked={anchor}
                 onChange={(e) => setAnchor(e.target.checked)}
               />
-              Anchor Safety Attestation on-chain
+              Anchor Safety Attestation on-chain (RiskRegistry)
             </label>
+            <p className="mt-2 text-[11px] text-muted-foreground">
+              Tip: leave the default address to see a live <strong>BLOCK</strong> on an EOA —
+              proof the engine is not a stub.
+            </p>
 
             <button
               onClick={run}
@@ -156,7 +176,7 @@ function Demo() {
               className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground disabled:opacity-50"
             >
               {loading ? <Loader2 className="size-4 animate-spin" /> : <ShieldCheck className="size-4" />}
-              Run trust check
+              Run trust check on chain {chainId}
             </button>
 
             {error && (

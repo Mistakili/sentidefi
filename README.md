@@ -1,14 +1,26 @@
 # SentinelFi
 
 **MCP-native risk infrastructure for EVM DeFi.**
-The agent-callable safety layer for HSK, BotChain, and every EVM chain.
+The agent-callable safety layer for **BotChain Mainnet**, HSK, and every EVM chain.
 
-> One public MCP endpoint. Three read-only tools. Any wallet, protocol, or AI
-> assistant plugs in in minutes — no SDK, no keys, no scraping.
+> One public Trust API + MCP endpoint. Signed Safety Attestations. Optional on-chain
+> anchor on BotChain. Any wallet, protocol, or AI agent plugs in in minutes — no SDK,
+> no keys, no scraping.
 
 - 🌐 **Live app:** https://sentidefi.lovable.app
-- 📖 **Whitepaper / docs:** https://sentidefi.lovable.app/docs
+- 🧪 **Mainnet demo:** https://sentidefi.lovable.app/demo
+- 📖 **Docs:** https://sentidefi.lovable.app/docs
 - 🤖 **MCP endpoint:** https://sentidefi.lovable.app/mcp
+
+### BotChain Mainnet (live)
+
+| | |
+|--|--|
+| **Chain ID** | `677` |
+| **RPC** | `https://rpc.botchain.ai` |
+| **RiskRegistry** | `0x9De70CA7Aa0BC1CEA1fBa33A1A7510A95B1c9883` |
+| **Explorer** | https://scan.botchain.ai/address/0x9De70CA7Aa0BC1CEA1fBa33A1A7510A95B1c9883 |
+| **Trust API** | `POST /api/v1/trust/check` with `"chainId": 677` |
 
 ---
 
@@ -131,9 +143,9 @@ at `http://localhost:8080/mcp` and the same three tools work locally.
 SentinelFi is chain-agnostic. Adding a new EVM chain is a single entry in
 `src/lib/chains.ts` — chain id, RPC URL, explorer, tracked tokens.
 
+- **BotChain Mainnet** (chainId 677) — live · RiskRegistry deployed
+- **BotChain Testnet** (chainId 968) — live
 - **HSK Chain** (chainId 177) — live
-- **HSK Testnet** (chainId 133) — used for on-chain attestation
-- **BotChain** — scaffolded, enable per launch
 - **Any EVM** (Base, BSC, Arbitrum, …) — drop-in via `chains.ts`
 
 ---
@@ -141,18 +153,16 @@ SentinelFi is chain-agnostic. Adding a new EVM chain is a single entry in
 ## Roadmap
 
 **Shipped**
-- Public MCP server with 3 read-only tools
-- HSK-native on-chain reads (metadata, supply, contract-vs-EOA, bytecode)
-- Chain-agnostic registry (`chains.ts`)
-- Copilot with intent routing (token vs wallet vs history)
-- Public risk-scan dataset with tx-hash provenance
+- BotChain Mainnet RiskRegistry + signed Safety Attestations
+- Public Trust API + MCP (`check_trust`, scan, portfolio, feed)
+- BotChain Testnet parity (968)
+- HSK-native on-chain reads · chain-agnostic adapters · public verdict feed
 
 **Next**
 - **Deeper scoring** — liquidity locks, ownership renouncement, mint/blacklist/pause detection, honeypot + tax simulation
 - **Behavioral signals** — whale-movement patterns, deployer history, rug-pattern matching from the public dataset
 - **Open methodology** — versioned, auditable, open-source scoring rulesets
-- **Multi-chain rollout** — BotChain, Base, BSC, and beyond on the same MCP surface
-- **One-click strategy execution** via HSK DEX router
+- **Ecosystem embed** — wallet chips, explorer badges, launchpad gates on BotChain
 - **Continuous monitoring** — alerts when a held token's verdict changes
 
 ---
