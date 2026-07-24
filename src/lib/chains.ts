@@ -38,14 +38,29 @@ const HSK: Chain = {
   ],
 };
 
-/** BOT Chain Testnet — https://dev-docs.botchain.ai/docs/Developers/json-rpc-endpoint/ */
+/** BOT Chain Mainnet — https://dev-docs.botchain.ai/docs/Developers/json-rpc-endpoint/ */
+export const BOTCHAIN_MAINNET_CHAIN_ID = 677;
+
+/** BOT Chain Testnet */
 export const BOTCHAIN_TESTNET_CHAIN_ID = 968;
 
-const BOTCHAIN: Chain = {
+const BOTCHAIN_MAINNET: Chain = {
+  id: BOTCHAIN_MAINNET_CHAIN_ID,
+  idHex: "0x2a5",
+  name: "BotChain",
+  shortName: "BOT",
+  rpcUrl: "https://rpc.botchain.ai",
+  explorer: "https://scan.botchain.ai",
+  nativeCurrency: { name: "BOT", symbol: "BOT", decimals: 18 },
+  status: "live",
+  tokens: [],
+};
+
+const BOTCHAIN_TESTNET: Chain = {
   id: BOTCHAIN_TESTNET_CHAIN_ID,
   idHex: "0x3c8",
   name: "BotChain Testnet",
-  shortName: "BOT",
+  shortName: "BOT-T",
   rpcUrl: "https://rpc.bohr.life",
   explorer: "https://scan.bohr.life",
   nativeCurrency: { name: "BOT", symbol: "BOT", decimals: 18 },
@@ -53,7 +68,7 @@ const BOTCHAIN: Chain = {
   tokens: [],
 };
 
-export const CHAINS: Chain[] = [HSK, BOTCHAIN];
+export const CHAINS: Chain[] = [HSK, BOTCHAIN_MAINNET, BOTCHAIN_TESTNET];
 
 export const DEFAULT_CHAIN_ID = HSK.id;
 

@@ -5,5 +5,9 @@
   "registry": "0x9De70CA7Aa0BC1CEA1fBa33A1A7510A95B1c9883",
   "attestor": "0x7D9640ed408b74f1Eb8B745032A4683b25bDd955",
   "deployer": "0x7D9640ed408b74f1Eb8B745032A4683b25bDd955",
-  "deployedAt": "2026-07-16T17:13:36.824Z"
+  "deployedAt": "2026-07-16T17:13:36.824Z",
+  "deployTx": "0x57946bcbb7200953e4fa180a3ff6c7d1abe8a9ddb65bd56d7d3148a7b699d849",
+  "deployBlock": 16520226,
+  "anchorTxSample": "0x873566f6374cf4c15107047c6a86ba98487c3b9b52e8441c98f1936a61da67b6",
+  "anchorBlock": 16520266
 }

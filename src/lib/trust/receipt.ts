@@ -1,5 +1,5 @@
 import { Wallet, keccak256, toUtf8Bytes, verifyMessage } from "ethers";
-import { BOTCHAIN_TESTNET_CHAIN_ID } from "@/lib/chains";
+import { BOTCHAIN_MAINNET_CHAIN_ID, BOTCHAIN_TESTNET_CHAIN_ID } from "@/lib/chains";
 import type {
   TrustChecks,
   TrustGrade,
@@ -7,8 +7,6 @@ import type {
   TrustSeverity,
   TrustVerdict,
 } from "./engine";
-
-const BOTCHAIN_MAINNET_CHAIN_ID = 677;
 
 function resolveAttestorKey(chainId: number): string {
   const isBot = chainId === BOTCHAIN_TESTNET_CHAIN_ID || chainId === BOTCHAIN_MAINNET_CHAIN_ID;

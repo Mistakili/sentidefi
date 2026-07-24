@@ -41,7 +41,7 @@ type CheckResult = {
 
 function Demo() {
   const [contract, setContract] = useState("0xb9c5fcca50c2a8ed5aa9cc6fa030f0acdc7ded66");
-  const [chainId, setChainId] = useState<number>(968);
+  const [chainId, setChainId] = useState<number>(677);
   const [anchor, setAnchor] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -113,8 +113,9 @@ function Demo() {
             </label>
             <div className="mt-2 flex gap-2">
               {[
-                { id: 177, label: "HSK Chain" },
+                { id: 677, label: "BotChain Mainnet" },
                 { id: 968, label: "BotChain Testnet" },
+                { id: 177, label: "HSK Chain" },
               ].map((c) => (
                 <button
                   key={c.id}

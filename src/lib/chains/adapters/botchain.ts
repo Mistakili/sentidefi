@@ -1,33 +1,38 @@
-import { BOTCHAIN_TESTNET_CHAIN_ID, getChain } from "@/lib/chains";
+import {
+  BOTCHAIN_MAINNET_CHAIN_ID,
+  BOTCHAIN_TESTNET_CHAIN_ID,
+  getChain,
+} from "@/lib/chains";
 import type { ChainAdapter, TokenOnChainData } from "./types";
 
-const DEFAULT_RPC = "https://rpc.bohr.life";
+type BotNetwork = {
+  chainId: number;
+  name: string;
+  defaultRpc: string;
+};
 
-/**
- * BotChain adapter — live on BOT Testnet (chainId 968).
- *
- * Defaults to the public testnet RPC from the BotChain docs. Override via:
- *   BOTCHAIN_RPC_URL   — JSON-RPC endpoint
- *   BOTCHAIN_CHAIN_ID  — decimal chainId (defaults to 968)
- */
-function config(): { chainId: number; rpcUrl: string } {
-  const chain = getChain(BOTCHAIN_TESTNET_CHAIN_ID);
-  const rpcUrl = process.env.BOTCHAIN_RPC_URL ?? chain?.rpcUrl ?? DEFAULT_RPC;
-  const chainId = Number(process.env.BOTCHAIN_CHAIN_ID ?? BOTCHAIN_TESTNET_CHAIN_ID);
-  return { chainId, rpcUrl };
-}
+const NETWORKS: Record<number, BotNetwork> = {
+  [BOTCHAIN_MAINNET_CHAIN_ID]: {
+    chainId: BOTCHAIN_MAINNET_CHAIN_ID,
+    name: "BotChain",
+    defaultRpc: "https://rpc.botchain.ai",
+  },
+  [BOTCHAIN_TESTNET_CHAIN_ID]: {
+    chainId: BOTCHAIN_TESTNET_CHAIN_ID,
+    name: "BotChain Testnet",
+    defaultRpc: "https://rpc.bohr.life",
+  },
+};
 
-async function rpc<T>(method: string, params: unknown[]): Promise<T> {
-  const { rpcUrl } = config();
-  const res = await fetch(rpcUrl, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
-  });
-  if (!res.ok) throw new Error(`BotChain RPC ${method} failed: ${res.status}`);
-  const json = (await res.json()) as { result?: T; error?: { message: string } };
-  if (json.error) throw new Error(`BotChain RPC ${method}: ${json.error.message}`);
-  return json.result as T;
+function rpcUrlFor(chainId: number): string {
+  const net = NETWORKS[chainId];
+  const chain = getChain(chainId);
+  // Prefer chain-specific env only when it matches this network's default intent.
+  // BOTCHAIN_RPC_URL is the mainnet override; testnet has a fixed public RPC.
+  if (chainId === BOTCHAIN_MAINNET_CHAIN_ID) {
+    return process.env.BOTCHAIN_RPC_URL ?? chain?.rpcUrl ?? net.defaultRpc;
+  }
+  return process.env.BOTCHAIN_TESTNET_RPC_URL ?? chain?.rpcUrl ?? net.defaultRpc;
 }
 
 function decodeString(hex: string): string {
@@ -51,87 +56,112 @@ const SIG = {
   totalSupply: "0x18160ddd",
 };
 
-async function ethCall(to: string, data: string): Promise<string> {
-  return rpc<string>("eth_call", [{ to, data }, "latest"]);
-}
+function makeBotchainAdapter(chainId: number): ChainAdapter {
+  const net = NETWORKS[chainId];
+  if (!net) throw new Error(`Unknown BotChain network: ${chainId}`);
 
-async function safeCall<T>(fn: () => Promise<T>): Promise<T | null> {
-  try {
-    return await fn();
-  } catch {
-    return null;
+  async function rpc<T>(method: string, params: unknown[]): Promise<T> {
+    const url = rpcUrlFor(chainId);
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
+    });
+    if (!res.ok) throw new Error(`BotChain RPC ${method} failed: ${res.status}`);
+    const json = (await res.json()) as { result?: T; error?: { message: string } };
+    if (json.error) throw new Error(`BotChain RPC ${method}: ${json.error.message}`);
+    return json.result as T;
   }
-}
 
-export const botchainAdapter: ChainAdapter = {
-  get chainId() {
-    return config().chainId;
-  },
-  name: "BotChain Testnet",
+  async function ethCall(to: string, data: string): Promise<string> {
+    return rpc<string>("eth_call", [{ to, data }, "latest"]);
+  }
 
-  async getBytecode(address) {
-    return rpc<string>("eth_getCode", [address.toLowerCase(), "latest"]);
-  },
-
-  async isContract(address) {
-    const code = await rpc<string>("eth_getCode", [address.toLowerCase(), "latest"]);
-    return code !== "0x" && code !== "0x0";
-  },
-
-  async getTokenOnChainData(address): Promise<TokenOnChainData> {
-    const { chainId, rpcUrl } = config();
-    const addr = address.toLowerCase();
-    if (!/^0x[a-f0-9]{40}$/.test(addr)) {
-      throw new Error("Invalid address — must be a 0x-prefixed 40-char hex string");
+  async function safeCall<T>(fn: () => Promise<T>): Promise<T | null> {
+    try {
+      return await fn();
+    } catch {
+      return null;
     }
+  }
 
-    const code = await rpc<string>("eth_getCode", [addr, "latest"]);
-    const isContract = code !== "0x" && code !== "0x0";
-    const bytecodeSize = isContract ? (code.length - 2) / 2 : 0;
+  return {
+    chainId,
+    name: net.name,
 
-    if (!isContract) {
+    async getBytecode(address) {
+      return rpc<string>("eth_getCode", [address.toLowerCase(), "latest"]);
+    },
+
+    async isContract(address) {
+      const code = await rpc<string>("eth_getCode", [address.toLowerCase(), "latest"]);
+      return code !== "0x" && code !== "0x0";
+    },
+
+    async getTokenOnChainData(address): Promise<TokenOnChainData> {
+      const rpcUrl = rpcUrlFor(chainId);
+      const addr = address.toLowerCase();
+      if (!/^0x[a-f0-9]{40}$/.test(addr)) {
+        throw new Error("Invalid address — must be a 0x-prefixed 40-char hex string");
+      }
+
+      const code = await rpc<string>("eth_getCode", [addr, "latest"]);
+      const isContract = code !== "0x" && code !== "0x0";
+      const bytecodeSize = isContract ? (code.length - 2) / 2 : 0;
+
+      if (!isContract) {
+        return {
+          address: addr,
+          isContract: false,
+          bytecodeSize: 0,
+          name: null,
+          symbol: null,
+          decimals: null,
+          totalSupply: null,
+          looksLikeERC20: false,
+          chainId,
+          rpcUrl,
+          note: "EOA (externally owned account)",
+        };
+      }
+
+      const [nameHex, symbolHex, decimalsHex, supplyHex] = await Promise.all([
+        safeCall(() => ethCall(addr, SIG.name)),
+        safeCall(() => ethCall(addr, SIG.symbol)),
+        safeCall(() => ethCall(addr, SIG.decimals)),
+        safeCall(() => ethCall(addr, SIG.totalSupply)),
+      ]);
+
+      const name = nameHex ? decodeString(nameHex) || null : null;
+      const symbol = symbolHex ? decodeString(symbolHex) || null : null;
+      const decimals = decimalsHex ? Number(BigInt(decimalsHex)) : null;
+      const totalSupply = supplyHex ? BigInt(supplyHex).toString() : null;
+      const looksLikeERC20 = Boolean(name && symbol && decimals !== null);
+
       return {
         address: addr,
-        isContract: false,
-        bytecodeSize: 0,
-        name: null,
-        symbol: null,
-        decimals: null,
-        totalSupply: null,
-        looksLikeERC20: false,
+        isContract: true,
+        bytecodeSize,
+        name,
+        symbol,
+        decimals,
+        totalSupply,
+        looksLikeERC20,
         chainId,
         rpcUrl,
-        note: "EOA (externally owned account)",
       };
-    }
+    },
+  };
+}
 
-    const [nameHex, symbolHex, decimalsHex, supplyHex] = await Promise.all([
-      safeCall(() => ethCall(addr, SIG.name)),
-      safeCall(() => ethCall(addr, SIG.symbol)),
-      safeCall(() => ethCall(addr, SIG.decimals)),
-      safeCall(() => ethCall(addr, SIG.totalSupply)),
-    ]);
+/** Mainnet (677) — default production BotChain surface. */
+export const botchainMainnetAdapter = makeBotchainAdapter(BOTCHAIN_MAINNET_CHAIN_ID);
 
-    const name = nameHex ? decodeString(nameHex) || null : null;
-    const symbol = symbolHex ? decodeString(symbolHex) || null : null;
-    const decimals = decimalsHex ? Number(BigInt(decimalsHex)) : null;
-    const totalSupply = supplyHex ? BigInt(supplyHex).toString() : null;
-    const looksLikeERC20 = Boolean(name && symbol && decimals !== null);
+/** Testnet (968). */
+export const botchainTestnetAdapter = makeBotchainAdapter(BOTCHAIN_TESTNET_CHAIN_ID);
 
-    return {
-      address: addr,
-      isContract: true,
-      bytecodeSize,
-      name,
-      symbol,
-      decimals,
-      totalSupply,
-      looksLikeERC20,
-      chainId,
-      rpcUrl,
-    };
-  },
-};
+/** @deprecated use botchainMainnetAdapter or botchainTestnetAdapter */
+export const botchainAdapter = botchainMainnetAdapter;
 
 export function botchainIsConfigured(): boolean {
   return true;

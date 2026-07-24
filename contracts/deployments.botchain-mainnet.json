@@ -1,0 +1,11 @@
+{
+  "chainId": 677,
+  "rpcUrl": "https://rpc.botchain.ai",
+  "explorer": "https://scan.botchain.ai",
+  "registry": "0x9De70CA7Aa0BC1CEA1fBa33A1A7510A95B1c9883",
+  "attestor": "0x7D9640ed408b74f1Eb8B745032A4683b25bDd955",
+  "deployer": "0x7D9640ed408b74f1Eb8B745032A4683b25bDd955",
+  "deployTx": "0xfa95a598d1ca87558b64e496dbcc1d8d2d47c3179584e704a0665f0ef7b424a8",
+  "anchorTxSample": "0xb2ac918261773f7a3041bb0a8c0794fa4fa4b0637beb60c83ec5af7f98329097",
+  "deployedAt": "2026-07-24T15:48:23.386Z"
+}

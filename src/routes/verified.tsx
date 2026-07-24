@@ -109,7 +109,7 @@ function Verified() {
             <pre className="mt-4 overflow-x-auto text-[13px] leading-relaxed"><code className="font-mono">{`import { checkTrust, getRecommendation } from "@sentinelfi/sdk";
 
 const verdict = await checkTrust({
-  chainId: 968,                // BotChain Testnet
+  chainId: 677,                // BotChain Mainnet
   action:  "swap",
   contract,
   anchor:  true,               // anchor the attestation on-chain

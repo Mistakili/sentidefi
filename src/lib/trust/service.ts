@@ -97,6 +97,7 @@ export async function runTrustCheck(
             ].join("|"),
           ),
         ),
+        chainId: input.chainId,
       })
     : { status: "skipped", reason: "not_requested" };
 

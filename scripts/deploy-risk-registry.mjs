@@ -1,12 +1,15 @@
 /**
- * Deploy RiskRegistry.sol to BOT Chain Testnet (chainId 968).
+ * Deploy RiskRegistry.sol to BotChain (mainnet 677 or testnet 968).
  *
- * Usage:
+ * Mainnet:
+ *   BOTCHAIN_RPC_URL=https://rpc.botchain.ai BOTCHAIN_CHAIN_ID=677 \
+ *   BOTCHAIN_EXPLORER=https://scan.botchain.ai \
  *   BOTCHAIN_ATTESTOR_PRIVATE_KEY=0x… npm run deploy:botchain-registry
  *
- * Optional:
- *   BOTCHAIN_RPC_URL          (default: https://rpc.bohr.life)
- *   BOTCHAIN_ATTESTOR_ADDRESS (default: deployer address)
+ * Testnet:
+ *   BOTCHAIN_RPC_URL=https://rpc.bohr.life BOTCHAIN_CHAIN_ID=968 \
+ *   BOTCHAIN_EXPLORER=https://scan.bohr.life \
+ *   BOTCHAIN_ATTESTOR_PRIVATE_KEY=0x… npm run deploy:botchain-registry
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
@@ -16,9 +19,9 @@ import { JsonRpcProvider, Wallet, ContractFactory } from "ethers";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "..");
-const RPC = process.env.BOTCHAIN_RPC_URL ?? "https://rpc.bohr.life";
-const CHAIN_ID = Number(process.env.BOTCHAIN_CHAIN_ID ?? 968);
-const EXPLORER = process.env.BOTCHAIN_EXPLORER ?? "https://scan.bohr.life";
+const RPC = process.env.BOTCHAIN_RPC_URL ?? "https://rpc.botchain.ai";
+const CHAIN_ID = Number(process.env.BOTCHAIN_CHAIN_ID ?? 677);
+const EXPLORER = process.env.BOTCHAIN_EXPLORER ?? "https://scan.botchain.ai";
 
 function compile() {
   const source = readFileSync(resolve(ROOT, "contracts/RiskRegistry.sol"), "utf8");
@@ -66,7 +69,7 @@ async function main() {
   console.log("Balance:", balance.toString(), "wei");
 
   if (balance === 0n) {
-    console.error("Deployer has zero balance — fund the wallet on BOT testnet first.");
+    console.error("Deployer has zero balance — fund the wallet with BOT gas first.");
     process.exit(1);
   }
 
@@ -78,6 +81,7 @@ async function main() {
   const contract = await factory.deploy(attestor);
   await contract.waitForDeployment();
   const address = await contract.getAddress();
+  const deployTx = contract.deploymentTransaction();
 
   const deployment = {
     chainId: CHAIN_ID,
@@ -86,10 +90,15 @@ async function main() {
     registry: address,
     attestor,
     deployer: wallet.address,
+    deployTx: deployTx?.hash ?? null,
     deployedAt: new Date().toISOString(),
   };
 
-  writeFileSync(resolve(ROOT, "contracts/deployments.botchain-testnet.json"), JSON.stringify(deployment, null, 2));
+  const outName =
+    CHAIN_ID === 968
+      ? "deployments.botchain-testnet.json"
+      : "deployments.botchain-mainnet.json";
+  writeFileSync(resolve(ROOT, "contracts", outName), JSON.stringify(deployment, null, 2));
 
   console.log("\n✓ RiskRegistry deployed");
   console.log("  Address:  ", address);

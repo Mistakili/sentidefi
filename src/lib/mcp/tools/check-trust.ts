@@ -7,7 +7,10 @@ export default defineTool({
   description:
     "The trust checkpoint every AI agent, wallet, or protocol should call before executing an on-chain action. Returns a clear recommendation (Proceed / Proceed with Caution / Manual Review Required / Block), a Trust Grade (A–F), a risk score, plain-English reasoning, and a cryptographically signed Safety Attestation any third party can verify off-chain with only the attestor's public address. HSK Chain live today; BotChain and additional EVMs plug into the same interface.",
   inputSchema: {
-    chainId: z.number().int().describe("EVM chain id (177 = HSK Chain, 968 = BotChain Testnet)."),
+    chainId: z
+      .number()
+      .int()
+      .describe("EVM chain id (177 = HSK, 677 = BotChain Mainnet, 968 = BotChain Testnet)."),
     action: z
       .enum(["swap", "approve", "transfer", "contract_call"])
       .describe("The kind of on-chain action being evaluated."),
