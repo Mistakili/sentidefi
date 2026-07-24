@@ -29,7 +29,7 @@
               "type": "integer",
               "minimum": -9007199254740991,
               "maximum": 9007199254740991,
-              "description": "EVM chain id (177 = HSK Chain, 968 = BotChain Testnet)."
+              "description": "EVM chain id (177 = HSK, 677 = BotChain Mainnet, 968 = BotChain Testnet)."
             },
             "action": {
               "type": "string",
